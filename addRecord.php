@@ -28,11 +28,28 @@ function updateRecord($conn, $tableName, $id, $fields)
     }
 }
 
+function addRecord($conn, $tableName, $fields)
+{
+    $columns = implode(', ', array_keys($fields));
+    $values = implode("', '", array_values($fields));
+    $sql = "INSERT INTO $tableName ($columns) VALUES ('$values')";
+
+    if ($conn->query($sql) === TRUE) {
+        echo "New record created successfully";
+    } else {
+        echo "Error: " . $sql . "<br>" . $conn->error;
+    }
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $table = $_POST['table'];
     $id = $_POST['id'];
     $fields = json_decode($_POST['fields'], true);
-    updateRecord($conn, $table, $id, $fields);
+    if (isset($id)) {
+        updateRecord($conn, $table, $id, $fields);
+    } else {
+        addRecord($conn, $table, $fields);
+    }
 }
 
 $conn->close();

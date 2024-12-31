@@ -66,26 +66,52 @@ $conn->close();
 
 <head>
     <title>Manage Tables</title>
+    <script>
+        function updateFields(table) {
+            let fields = {
+                'admins': ['first_name', 'last_name', 'email', 'gov_id'],
+                'bikes': ['rider_id', 'tag_id', 'size', 'status', 'longitude', 'latitude'],
+                'nfc_tags': ['uid', 'client_id', 'admin_id', 'status'],
+                'transactions': ['client_id', 'invoice_num', 'payment_method', 'amount_due', 'status'],
+                'users': ['first_name', 'last_name', 'email', 'contact_num', 'gov_id']
+            };
+
+            let form = document.getElementById('addForm');
+            form.innerHTML = '';
+            fields[table].forEach(field => {
+                let input = document.createElement('input');
+                input.type = 'text';
+                input.name = field;
+                input.placeholder = field;
+                form.appendChild(input);
+                form.appendChild(document.createElement('br'));
+            });
+
+            let tableInput = document.createElement('input');
+            tableInput.type = 'hidden';
+            tableInput.name = 'table';
+            tableInput.value = table;
+            form.appendChild(tableInput);
+
+            let submit = document.createElement('button');
+            submit.type = 'submit';
+            submit.name = 'add';
+            submit.textContent = 'Add Record';
+            form.appendChild(submit);
+        }
+    </script>
 </head>
 
 <body>
     <form method="post">
-        <button type="submit" name="table" value="admins">Show Admins</button>
-        <button type="submit" name="table" value="bikes">Show Bikes</button>
-        <button type="submit" name="table" value="nfc_tags">Show NFC Tags</button>
-        <button type="submit" name="table" value="transactions">Show Transactions</button>
-        <button type="submit" name="table" value="users">Show Users</button>
+        <button type="submit" name="table" value="admins" onclick="updateFields('admins'); return false;">Show Admins</button>
+        <button type="submit" name="table" value="bikes" onclick="updateFields('bikes'); return false;">Show Bikes</button>
+        <button type="submit" name="table" value="nfc_tags" onclick="updateFields('nfc_tags'); return false;">Show NFC Tags</button>
+        <button type="submit" name="table" value="transactions" onclick="updateFields('transactions'); return false;">Show Transactions</button>
+        <button type="submit" name="table" value="users" onclick="updateFields('users'); return false;">Show Users</button>
     </form>
-    <form method="post" action="updateRecord.php">
-        <input type="hidden" name="table" value="admins">
-        <input type="hidden" name="id" value="1">
-        <input type="hidden" name="fields" value='{"first_name":"John", "last_name":"Doe"}'>
-        <button type="submit" name="update">Update Record</button>
-    </form>
-    <form method="post" action="deleteRecord.php">
-        <input type="hidden" name="table" value="admins">
-        <input type="hidden" name="id" value="1">
-        <button type="submit" name="delete">Delete Record</button>
+    <form id="addForm" method="post" action="addRecord.php">
+        <!-- Dynamic fields will be added here -->
     </form>
 </body>
 
