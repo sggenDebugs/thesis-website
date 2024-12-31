@@ -47,13 +47,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 displayTable($conn, 'bikes', 'id, rider_id, tag_id, size, created_at, last_used_at, status, longitude, latitude'); 
                 break;
             case 'nfc_tags':
-                displayTable($conn, 'nfc_tags', 'id, uid, client_id, admin_id, created_at, updated_at, status'); // Add your fields here
+                displayTable($conn, 'nfc_tags', 'id, uid, client_id, admin_id, created_at, updated_at, status'); 
                 break;
             case 'transactions':
-                displayTable($conn, 'transactions', 'id, client_id, invoice_num, payment_method, amount_due, status'); // Add your fields here
+                displayTable($conn, 'transactions', 'id, client_id, invoice_num, payment_method, amount_due, status'); 
                 break;
             case 'users':
-                displayTable($conn, 'users', 'id, created_at, last_signed_in_at, first_name, last_name, email, contact_num, gov_id'); // Add your fields here
+                displayTable($conn, 'users', 'id, created_at, last_signed_in_at, first_name, last_name, email, contact_num, gov_id'); 
                 break;
         }
     }
@@ -65,7 +65,7 @@ $conn->close();
 <html>
 
 <head>
-    <title>Display Tables</title>
+    <title>Manage Tables</title>
 </head>
 
 <body>
@@ -75,6 +75,17 @@ $conn->close();
         <button type="submit" name="table" value="nfc_tags">Show NFC Tags</button>
         <button type="submit" name="table" value="transactions">Show Transactions</button>
         <button type="submit" name="table" value="users">Show Users</button>
+    </form>
+    <form method="post" action="updateRecord.php">
+        <input type="hidden" name="table" value="admins">
+        <input type="hidden" name="id" value="1">
+        <input type="hidden" name="fields" value='{"first_name":"John", "last_name":"Doe"}'>
+        <button type="submit" name="update">Update Record</button>
+    </form>
+    <form method="post" action="deleteRecord.php">
+        <input type="hidden" name="table" value="admins">
+        <input type="hidden" name="id" value="1">
+        <button type="submit" name="delete">Delete Record</button>
     </form>
 </body>
 
