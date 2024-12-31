@@ -36,6 +36,7 @@ function displayTable($conn, $tableName, $fields)
     }
 }
 
+$table = '';
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST['table'])) {
         $table = $_POST['table'];
