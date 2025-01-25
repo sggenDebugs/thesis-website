@@ -1,0 +1,218 @@
+@import 'https://fonts.googleapis.com/css?family=Alegreya+Sans';
+
+/*reset the browser settings */
+
+*{
+    margin: 0;
+    padding : 0;
+    border : 0;
+}
+
+body{
+    background-color:#f5f5f5;
+    color: #d20000;
+    font-family: 'Alegreya',sans-serif;
+    margin : 0;
+}
+
+h3{
+    font-size: 200%;
+    font-weight: 500;
+    line-height: 160%;
+    text-align : center;
+    padding : 2%  0; 
+    color:#f5f5f5;
+}
+p{
+    font-size: 150%;
+    line-height: 150%;
+    padding : 2%;
+    text-indent:2%;
+    text-align: justify;
+}
+
+img{
+    max-width:50%;
+    height: auto;
+    weight: auto;
+    margin-bottom: -4px;
+}
+header{
+    background-color: #d20000;
+    width: 100%;
+    height: 200px;
+}
+#header{
+    max-width: 1200px;
+    /* margin: 0 auto;  */
+ }
+
+#rdlogo{
+    margin: 0 auto;
+    float: left;
+    width: 200px;
+    height:200px;
+    background: url(img/RD.png) no-repeat center;
+}
+nav{
+    float: right;
+    padding: 10px 10px 0px 0px;
+ }
+#menu-icon{
+    display:hidden;
+    width: 35px;
+    height: 35px;
+    background: url(img/nav.png) center;
+}
+a:hover#menu-icon{
+    border-radius: 4px 4px 0 0;
+} 
+ul {
+    list-style-type:none;
+    margin:0;
+    padding:0;
+}
+/*Create a horizontal list with spacing*/
+nav ul li{
+    font-family: 'Alegreya Sans', sans-serif;
+    font-size:130%; 
+    display:inline-block;
+    float: left;
+    padding: 10px;
+}
+
+nav ul li a{
+    color: #f5f5f5;
+    text-decoration: none;
+}
+nav ul li li a:hover{
+    color: #f24d48;
+}
+.current {
+    color: #f24d48;
+}    
+
+
+/*Hide dropdown links until they are needed*/
+nav ul li ul {
+    display: none;
+}
+/*Make dropdown links vertical*/
+nav ul li ul li {
+    display: block;
+    float: none;
+}
+ /* Prevent text wrapping */
+nav ul li ul li a {
+    font-size: 100%;
+    width: auto;
+    min-width: 100px;
+    /* padding: 10px 0px; */
+} 
+/*Display the dropdown on hover*/
+nav ul li ul li a:hover + .hidden, .hidden:hover {
+    display: block;
+}
+
+/*end of navigation  */
+.banner{
+    width: 100%;
+    background-color: #f5f5f5;
+}
+.bannerInside{
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+.one-f{
+    width: 25%;
+    float: left;
+    text-align:center;
+}
+#html{
+    background-color: #f1aa90;
+}
+#css{
+    background-color: #BEB9AD;
+}
+#php{
+    background-color: #aadcd2;
+}
+#mysql{
+    background-color: #a2b2c1;
+}
+.one-f i{
+    color: #f0f0f0;
+    font-size: 450%;
+    padding: 12% 0 4% 0;
+}
+
+.one-f  i icon-php{
+    color: #f0f0f0;
+    font-size: 450%;
+    padding: 12% 0 4% 0;
+}
+.one-f i icon-mysql{
+    color: #f0f0f0;
+    font-size: 450%;
+    padding: 12% 0 4% 0;
+}
+.wrapper{
+    float:left;
+    width: 100%;
+    background-color: #f5f5f5
+}
+article{
+    float:left;
+    /* margin:0 auto; */
+    width: 50%;
+    height: auto;
+}
+#prusa{
+    background-color: #f5f5f5;
+    width:50%;
+    float:center;
+    margin: 0 auto;
+}
+aside{
+    float:right;
+    margin: 0 auto;
+    width:50%;
+    height:auto;
+}
+#prusa2{
+    background-color: #f1aa90;
+    padding : 3% 0 0 0;
+    }
+
+footer {
+    background-color: #6991ac;
+    width:100%;
+   }
+.socialMedia{
+    list-style-type: none;
+    text-align: center;
+}
+.socialMedia li{
+    display: inline;
+}
+.socialMedia i{
+    font-size:300%;
+    margin:1%;
+    padding: 5% 5% 5% 5%;
+    color:#f5f5f5;
+}
+.socialMedia i:hover{
+    color:#f24d48;
+}
+footer.last{
+    border-top: 2px solid #aadcd2;
+    background-color: #544b59;
+    max-height: 60px;
+    margin: 0;
+}
+footer.last p{
+    padding: 5px 0 9px 0;
+    text-align: center;
+}
+
+
