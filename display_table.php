@@ -26,7 +26,7 @@ function displayTable($conn, $tableName, $fields)
         echo "</tr>";
         while ($row = $result->fetch_assoc()) {
             echo "<tr>";
-            foreach (explode(',', $fields) as $field) {
+            foreach ($fieldArray as $field) {
                 echo "<td>" . $row[trim($field)] . "</td>";
             }
             echo "</tr>";
@@ -41,6 +41,8 @@ $table = null;
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['table'])) {
     $table = $_POST['table'];
 }
+
+$conn->close();
 ?>
 
 <!DOCTYPE html>
