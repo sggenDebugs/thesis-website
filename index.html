@@ -9,12 +9,12 @@
     <link rel="stylesheet" href="css/font-awesome.min.css">
     <link rel="stylesheet" href="css/technology-icons.css">
     <link rel="shortcut icon" type="image/png" href="img/favicon.png">
-    <title>RD CED</title>
+    <title>RD CED - Database Viewer</title>
 </head>
 
 <body>
-     <section class = "banner">
-        <div class = "bannerInside">
+    <section class="banner">
+        <div class="bannerInside">
             <img src="img/logo.png" center>
         </div>
     </section>
@@ -23,76 +23,54 @@
             <a href="index.html" id="rdlogo"></a>
             <nav>
                 <a href="#" id="menu_icon"></a>
-                <ul id ="menu">
+                <ul id="menu">
                     <li><a href="index.html" class="current">Home</a></li>
                     <li><a href="laboratory.html">Laboratory</a></li>
                     <li><a href="research.html">Research</a></li>
                     <li><a href="#">Services</a>
-                        <ul class = "hidden">
-                                    <li><a href="3dprinting.html">3D Printing</a></li>
-                                    <li><a href="design.html">PCB Design</a></li>
-                        </ul>      
+                        <ul class="hidden">
+                            <li><a href="3dprinting.html">3D Printing</a></li>
+                            <li><a href="design.html">PCB Design</a></li>
+                        </ul>
                     </li>
                     <li><a href="#">Tutorials</a>
-                        <ul class = "hidden">
+                        <ul class="hidden">
                             <li><a href="qt.html">Qt C++</a></li>
                             <li><a href="xhtml.html">XHTML</a></li>
                             <li><a href="php.html">php</a></li>
                             <li><a href="mysql.html">MySql</a></li>
-                        </ul> 
-                    </li>    
-                    <li><a href="Contact.html">Contact</a></li>    
+                        </ul>
+                    </li>
+                    <li><a href="Contact.html">Contact</a></li>
                 </ul>
             </nav>
         </div>
     </header>
-   
 
-<!-- end of header-->
-<section class = "one-f" id = "html">
-    <td><i  class = "icon-html5"></i></td>
-    <h3>HTML5</h3>
-</section>
-<section class = "one-f" id = "css">
-    <td><i  class = "icon-css3"></i></td>
-    <h3>CSS3</h3>
-</section>
-<section class = "one-f" id = "php">
-    <td><i  class = "icon-php"></i></td>
-    <h3>php</h3>
-</section>
-<section class = "one-f" id = "mysql">
-    <td><i  class = "icon-mysql"></i></td>
-    <h3>MySql</h3>
-</section>
+    <!-- Database Table Display Section -->
+    <section class="wrapper">
+        <h2>Database Tables</h2>
+        <form method="post" action="display_table.php" class="form-style">
+            <button type="submit" name="table" value="admins" class="btn">Show Admins</button>
+            <button type="submit" name="table" value="bikes" class="btn">Show Bikes</button>
+            <button type="submit" name="table" value="nfc_tags" class="btn">Show NFC Tags</button>
+            <button type="submit" name="table" value="transactions" class="btn">Show Transactions</button>
+            <button type="submit" name="table" value="users" class="btn">Show Users</button>
+        </form>
+    </section>
 
-<!-- end of four column section -->
-
-<section class = "wrapper">   
-    <article id = "prusa">
-        <img src="img/mk2.png">
-    </article>
-    <aside id = "prusa2">
-        <h3>Original Prusa MK2 3D Printer</h3>
-        <p> All parts of the MK2 printer are Open Source. 
-            From the first screw to the last bit of Firmware! 
-            Proven design and best components makes for workhorse printer. 
-            No Chinese cheaptronics, The MK2 uses original RAMBos 
-            for example!</p>   
-    </aside>
-</section>
-
-<footer>
-    <ul class = "socialMedia">    
-        <li><a href="https://www.facebook.com" target = "_blank"><i class = "fa fa-facebook"></i></a></li>
-        <li><a href="https://www.plus.google.com" target = "_blank"><i class = "fa fa-google-plus"></i></a></li>
-        <li><a href="https://www.twitter.com" target = "_blank"><i class = "fa fa-twitter"></i></a></li>
-        <li><a href="https://www.youtube.com" target = "_blank"><i class = "fa fa-youtube"></i></a></li>
-    </ul>
-</footer>
-<footer class = "last">
-    <p>&copy; GBCarlos</p>
-</footer>
-
+    <!-- Footer Section -->
+    <footer>
+        <ul class="socialMedia">
+            <li><a href="https://www.facebook.com" target="_blank"><i class="fa fa-facebook"></i></a></li>
+            <li><a href="https://www.plus.google.com" target="_blank"><i class="fa fa-google-plus"></i></a></li>
+            <li><a href="https://www.twitter.com" target="_blank"><i class="fa fa-twitter"></i></a></li>
+            <li><a href="https://www.youtube.com" target="_blank"><i class="fa fa-youtube"></i></a></li>
+        </ul>
+    </footer>
+    <footer class="last">
+        <p>&copy; IP</p>
+    </footer>
 </body>
+
 </html>
