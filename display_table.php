@@ -42,7 +42,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['table'])) {
     $table = $_POST['table'];
 }
 
-$conn->close();
+
 ?>
 
 <!DOCTYPE html>
