@@ -19,7 +19,8 @@ function displayTable($conn, $tableName, $fields)
 
     if ($result->num_rows > 0) {
         echo "<table border='1'><tr>";
-        foreach (explode(',', $fields) as $field) {
+        $fieldArray = explode(',', $fields);
+        foreach ($fieldArray as $field) {
             echo "<th>" . trim($field) . "</th>";
         }
         echo "</tr>";
@@ -35,10 +36,9 @@ function displayTable($conn, $tableName, $fields)
         echo "0 results";
     }
 }
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (isset($_POST['table'])) {
-        $table = $_POST['table'];
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['table'])) {
+    $table = $_POST['table'];
+    if ($conn->ping()) {
         switch ($table) {
             case 'admins':
                 displayTable($conn, 'admins', 'id, created_at, last_signed_in_at, first_name, last_name, email, gov_id');
@@ -56,10 +56,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 displayTable($conn, 'users', 'id, created_at, last_signed_in_at, first_name, last_name, email, contact_num, gov_id');
                 break;
         }
+    } else {
+        echo "Connection lost.";
     }
 }
 $conn->close();
 ?>
+$conn->close();
 
 <!DOCTYPE html>
 <html lang="en">
@@ -112,7 +115,7 @@ $conn->close();
 
     <!-- Database Table Display Section -->
     <section class="wrapper">
-        <h2>Database Tables</h2>
+        <h2>Show Tables</h2>
         <form method="post" action="display_table.php" class="form-style">
             <button type="submit" name="table" value="admins" class="btn">Show Admins</button>
             <button type="submit" name="table" value="bikes" class="btn">Show Bikes</button>
@@ -124,22 +127,26 @@ $conn->close();
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if (isset($_POST['table'])) {
                 $table = $_POST['table'];
-                switch ($table) {
-                    case 'admins':
-                        displayTable($conn, 'admins', 'id, created_at, last_signed_in_at, first_name, last_name, email, gov_id');
-                        break;
-                    case 'bikes':
-                        displayTable($conn, 'bikes', 'id, rider_id, tag_id, size, created_at, last_used_at, status, longitude, latitude');
-                        break;
-                    case 'nfc_tags':
-                        displayTable($conn, 'nfc_tags', 'id, uid, client_id, admin_id, created_at, updated_at, status');
-                        break;
-                    case 'transactions':
-                        displayTable($conn, 'transactions', 'id, client_id, invoice_num, payment_method, amount_due, status');
-                        break;
-                    case 'users':
-                        displayTable($conn, 'users', 'id, created_at, last_signed_in_at, first_name, last_name, email, contact_num, gov_id');
-                        break;
+                if ($conn->ping()) {
+                    switch ($table) {
+                        case 'admins':
+                            displayTable($conn, 'admins', 'id, created_at, last_signed_in_at, first_name, last_name, email, gov_id');
+                            break;
+                        case 'bikes':
+                            displayTable($conn, 'bikes', 'id, rider_id, tag_id, size, created_at, last_used_at, status, longitude, latitude');
+                            break;
+                        case 'nfc_tags':
+                            displayTable($conn, 'nfc_tags', 'id, uid, client_id, admin_id, created_at, updated_at, status');
+                            break;
+                        case 'transactions':
+                            displayTable($conn, 'transactions', 'id, client_id, invoice_num, payment_method, amount_due, status');
+                            break;
+                        case 'users':
+                            displayTable($conn, 'users', 'id, created_at, last_signed_in_at, first_name, last_name, email, contact_num, gov_id');
+                            break;
+                    }
+                } else {
+                    echo "Connection lost.";
                 }
             }
         }
