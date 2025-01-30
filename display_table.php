@@ -36,31 +36,11 @@ function displayTable($conn, $tableName, $fields)
         echo "0 results";
     }
 }
+
+$table = null;
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['table'])) {
     $table = $_POST['table'];
-    if ($conn->ping()) {
-        switch ($table) {
-            case 'admins':
-                displayTable($conn, 'admins', 'id, created_at, last_signed_in_at, first_name, last_name, email, gov_id');
-                break;
-            case 'bikes':
-                displayTable($conn, 'bikes', 'id, rider_id, tag_id, size, created_at, last_used_at, status, longitude, latitude');
-                break;
-            case 'nfc_tags':
-                displayTable($conn, 'nfc_tags', 'id, uid, client_id, admin_id, created_at, updated_at, status');
-                break;
-            case 'transactions':
-                displayTable($conn, 'transactions', 'id, client_id, invoice_num, payment_method, amount_due, status');
-                break;
-            case 'users':
-                displayTable($conn, 'users', 'id, created_at, last_signed_in_at, first_name, last_name, email, contact_num, gov_id');
-                break;
-        }
-    } else {
-        echo "Connection lost.";
-    }
 }
-$conn->close();
 ?>
 
 <!DOCTYPE html>
@@ -114,7 +94,7 @@ $conn->close();
 
     <!-- Database Table Display Section -->
     <section class="wrapper">
-        <h2>Show Tables</h2>
+        <h2>Database Tables</h2>
         <form method="post" action="display_table.php" class="form-style">
             <button type="submit" name="table" value="admins" class="btn">Show Admins</button>
             <button type="submit" name="table" value="bikes" class="btn">Show Bikes</button>
@@ -123,30 +103,23 @@ $conn->close();
             <button type="submit" name="table" value="users" class="btn">Show Users</button>
         </form>
         <?php
-        if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            if (isset($_POST['table'])) {
-                $table = $_POST['table'];
-                if ($conn->ping()) {
-                    switch ($table) {
-                        case 'admins':
-                            displayTable($conn, 'admins', 'id, created_at, last_signed_in_at, first_name, last_name, email, gov_id');
-                            break;
-                        case 'bikes':
-                            displayTable($conn, 'bikes', 'id, rider_id, tag_id, size, created_at, last_used_at, status, longitude, latitude');
-                            break;
-                        case 'nfc_tags':
-                            displayTable($conn, 'nfc_tags', 'id, uid, client_id, admin_id, created_at, updated_at, status');
-                            break;
-                        case 'transactions':
-                            displayTable($conn, 'transactions', 'id, client_id, invoice_num, payment_method, amount_due, status');
-                            break;
-                        case 'users':
-                            displayTable($conn, 'users', 'id, created_at, last_signed_in_at, first_name, last_name, email, contact_num, gov_id');
-                            break;
-                    }
-                } else {
-                    echo "Connection lost.";
-                }
+        if ($table) {
+            switch ($table) {
+                case 'admins':
+                    displayTable($conn, 'admins', 'id, created_at, last_signed_in_at, first_name, last_name, email, gov_id');
+                    break;
+                case 'bikes':
+                    displayTable($conn, 'bikes', 'id, rider_id, tag_id, size, created_at, last_used_at, status, longitude, latitude');
+                    break;
+                case 'nfc_tags':
+                    displayTable($conn, 'nfc_tags', 'id, uid, client_id, admin_id, created_at, updated_at, status');
+                    break;
+                case 'transactions':
+                    displayTable($conn, 'transactions', 'id, client_id, invoice_num, payment_method, amount_due, status');
+                    break;
+                case 'users':
+                    displayTable($conn, 'users', 'id, created_at, last_signed_in_at, first_name, last_name, email, contact_num, gov_id');
+                    break;
             }
         }
         ?>
