@@ -62,7 +62,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['table'])) {
 }
 $conn->close();
 ?>
-$conn->close();
 
 <!DOCTYPE html>
 <html lang="en">
