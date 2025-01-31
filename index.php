@@ -59,59 +59,68 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['table'])) {
     <link rel="shortcut icon" type="image/png" href="img/favicon.png">
     <title>RD CED - Database Viewer</title>
     <style>
-        /* Style for the table */
-        .styled-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 25px 0;
-            font-size: 0.9em;
-            font-family: sans-serif;
-            min-width: 400px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
-        }
+    h3 {
+        font-size: 200%;
+        font-weight: 500;
+        line-height: 160%;
+        text-align: center;
+        padding: 2% 0;
+        color: #000000;
+    }
 
-        .styled-table thead tr {
-            background-color: #009879;
-            color: #ffffff;
-            text-align: left;
-        }
+    /* Style for the table */
+    .styled-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 25px 0;
+        font-size: 0.9em;
+        font-family: sans-serif;
+        min-width: 400px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+    }
 
-        .styled-table th,
-        .styled-table td {
-            padding: 12px 15px;
-        }
+    .styled-table thead tr {
+        background-color: #009879;
+        color: #ffffff;
+        text-align: left;
+    }
 
-        .styled-table tbody tr {
-            border-bottom: 1px solid #dddddd;
-        }
+    .styled-table th,
+    .styled-table td {
+        padding: 12px 15px;
+    }
 
-        .styled-table tbody tr:nth-of-type(even) {
-            background-color: #f3f3f3;
-        }
+    .styled-table tbody tr {
+        border-bottom: 1px solid #dddddd;
+    }
 
-        .styled-table tbody tr:last-of-type {
-            border-bottom: 2px solid #009879;
-        }
+    .styled-table tbody tr:nth-of-type(even) {
+        background-color: #f3f3f3;
+    }
 
-        .styled-table tbody tr:hover {
-            background-color: #f1f1f1;
-        }
+    .styled-table tbody tr:last-of-type {
+        border-bottom: 2px solid #009879;
+    }
 
-        /* Style for buttons */
-        .btn {
-            background-color: #009879;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            margin: 5px;
-        }
+    .styled-table tbody tr:hover {
+        background-color: #f1f1f1;
+    }
 
-        .btn:hover {
-            background-color: #007f63;
-        }
+    /* Style for buttons */
+    .btn {
+        background-color: #009879;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        margin: 5px;
+    }
+
+    .btn:hover {
+        background-color: #007f63;
+    }
     </style>
 </head>
 
