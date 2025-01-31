@@ -206,7 +206,7 @@ $conn->close();
                             data.forEach(item => {
                                 var option = document.createElement('option');
                                 option.value = item.id;
-                                option.textContent = item.name;
+                                option.textContent = item.last_name || item.uid;
                                 input.appendChild(option);
                             });
                         });
