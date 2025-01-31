@@ -22,9 +22,10 @@ if ($result->num_rows > 0) {
     }
 }
 
-$conn->close();
-
 header('Content-Type: application/json');
 $result = json_encode($riders);
 echo $result;
+
+$conn->close();
+
 ?>
