@@ -30,6 +30,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $table = $_POST['table'];
     $data = $_POST['data'];
 
+    // Add the current timestamp for created_at and last_signed_in_at fields (if applicable)
+    if ($table === 'admins') {
+        $data['created_at'] = date('Y-m-d H:i:s'); // Current timestamp
+        $data['last_signed_in_at'] = date('Y-m-d H:i:s'); // Current timestamp
+    }
+
     addRecord($conn, $table, $data);
 }
 
@@ -68,13 +74,13 @@ $conn->close();
             var fieldsDiv = document.getElementById('fields');
             fieldsDiv.innerHTML = '';
 
-            // Define fields for each table, excluding the 'id' field
+            // Define fields for each table
             var fields = {
-                'admins': ['created_at', 'last_signed_in_at', 'first_name', 'last_name', 'email', 'gov_id'],
-                'bikes': ['rider_id', 'tag_id', 'size', 'created_at', 'last_used_at', 'status', 'longitude', 'latitude'],
-                'nfc_tags': ['uid', 'client_id', 'admin_id', 'created_at', 'updated_at', 'status'],
+                'admins': ['first_name', 'last_name', 'email', 'gov_id'], // Only these fields are shown
+                'bikes': ['rider_id', 'tag_id', 'size', 'status', 'longitude', 'latitude'],
+                'nfc_tags': ['uid', 'client_id', 'admin_id', 'status'],
                 'transactions': ['client_id', 'invoice_num', 'payment_method', 'amount_due', 'status'],
-                'users': ['created_at', 'last_signed_in_at', 'first_name', 'last_name', 'email', 'contact_num', 'gov_id']
+                'users': ['first_name', 'last_name', 'email', 'contact_num', 'gov_id']
             };
 
             // Dynamically generate input fields for the selected table
