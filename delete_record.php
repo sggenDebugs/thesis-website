@@ -13,6 +13,8 @@ if ($conn->connect_error) {
 }
 
 // Handle form submission
+$message = '';
+$selected_table = $_POST['table'] ?? null;
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_ids'])) {
     $delete_ids = $_POST['delete_ids'];
     foreach ($delete_ids as $id) {
@@ -20,8 +22,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_ids'])) {
     }
     $message = "Selected records deleted successfully";
 }
-
-$selected_table = $_POST['table'] ?? null;
 ?>
 
 <!DOCTYPE html>
@@ -133,12 +133,13 @@ $selected_table = $_POST['table'] ?? null;
         <h2>Delete Record</h2>
         <form method="post" action="delete_record.php" class="form-style">
             <label for="table">Table Name:</label>
-            <select name="table" id="table">
-                <option value="admins">Admins</option>
-                <option value="bikes">Bikes</option>
-                <option value="nfc_tags">NFC Tags</option>
-                <option value="transactions">Transactions</option>
-                <option value="users">Users</option>
+            <select name="table" id="table" onchange="this.form.submit()">
+                <option value="">Select a table</option>
+                <option value="admins" <?= $selected_table == 'admins' ? 'selected' : '' ?>>Admins</option>
+                <option value="bikes" <?= $selected_table == 'bikes' ? 'selected' : '' ?>>Bikes</option>
+                <option value="nfc_tags" <?= $selected_table == 'nfc_tags' ? 'selected' : '' ?>>NFC Tags</option>
+                <option value="transactions" <?= $selected_table == 'transactions' ? 'selected' : '' ?>>Transactions</option>
+                <option value="users" <?= $selected_table == 'users' ? 'selected' : '' ?>>Users</option>
             </select><br><br>
 
             <?php if ($message) echo "<p>$message</p>"; ?>
