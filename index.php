@@ -126,7 +126,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['table'])) {
             <nav>
                 <a href="#" id="menu_icon"></a>
                 <ul id="menu">
-                    <li><a href="index.html" class="current">Home</a></li>
+                    <li><a href="index.php" class="current">Display Tables</a></li>
                     <li><a href="add_record.php">Add Record</a></li>
                     <li><a href="delete_record.php">Delete Record</a></li>
                     <li><a href="#">Services</a>
