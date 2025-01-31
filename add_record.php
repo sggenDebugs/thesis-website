@@ -183,7 +183,7 @@ $conn->close();
                 var fields = {
                     'admins': ['first_name', 'last_name', 'email', 'gov_id'],
                     'bikes': ['rider_id', 'tag_id', 'size', 'status', 'longitude', 'latitude'],
-                    'nfc_tags': ['uid', 'client_id', 'admin_id', 'status'],
+                    'nfc_tags': ['client_id', 'admin_id', 'status'],
                     'transactions': ['client_id', 'invoice_num', 'payment_method', 'amount_due', 'status'],
                     'users': ['first_name', 'last_name', 'email', 'contact_num', 'gov_id']
                 };
