@@ -13,7 +13,8 @@ if ($conn->connect_error) {
 }
 
 // Function to add a record to the database
-function addRecord($conn, $tableName, $data) {
+function addRecord($conn, $tableName, $data)
+{
     $columns = implode(", ", array_keys($data));
     $values = "'" . implode("', '", array_values($data)) . "'";
     $sql = "INSERT INTO $tableName ($columns) VALUES ($values)";
@@ -56,59 +57,59 @@ $conn->close();
     <link rel="shortcut icon" type="image/png" href="img/favicon.png">
     <title>Add Record</title>
     <style>
-    /* Style for the table */
-    .styled-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin: 25px 0;
-        font-size: 0.9em;
-        font-family: sans-serif;
-        min-width: 400px;
-        box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
-    }
+        /* Style for the table */
+        .styled-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            font-size: 0.9em;
+            font-family: sans-serif;
+            min-width: 400px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+        }
 
-    .styled-table thead tr {
-        background-color: #009879;
-        color: #ffffff;
-        text-align: left;
-    }
+        .styled-table thead tr {
+            background-color: #009879;
+            color: #ffffff;
+            text-align: left;
+        }
 
-    .styled-table th,
-    .styled-table td {
-        padding: 12px 15px;
-    }
+        .styled-table th,
+        .styled-table td {
+            padding: 12px 15px;
+        }
 
-    .styled-table tbody tr {
-        border-bottom: 1px solid #dddddd;
-    }
+        .styled-table tbody tr {
+            border-bottom: 1px solid #dddddd;
+        }
 
-    .styled-table tbody tr:nth-of-type(even) {
-        background-color: #f3f3f3;
-    }
+        .styled-table tbody tr:nth-of-type(even) {
+            background-color: #f3f3f3;
+        }
 
-    .styled-table tbody tr:last-of-type {
-        border-bottom: 2px solid #009879;
-    }
+        .styled-table tbody tr:last-of-type {
+            border-bottom: 2px solid #009879;
+        }
 
-    .styled-table tbody tr:hover {
-        background-color: #f1f1f1;
-    }
+        .styled-table tbody tr:hover {
+            background-color: #f1f1f1;
+        }
 
-    /* Style for buttons */
-    .btn {
-        background-color: #009879;
-        color: white;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 16px;
-        margin: 5px;
-    }
+        /* Style for buttons */
+        .btn {
+            background-color: #009879;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+        }
 
-    .btn:hover {
-        background-color: #007f63;
-    }
+        .btn:hover {
+            background-color: #007f63;
+        }
     </style>
 </head>
 
@@ -171,79 +172,106 @@ $conn->close();
         </form>
 
         <script>
-        document.getElementById('table').addEventListener('change', function() {
-            var table = this.value;
-            var fieldsDiv = document.getElementById('fields');
-            var tableNameDiv = document.getElementById('table-name');
-            fieldsDiv.innerHTML = '';
-            tableNameDiv.innerHTML = '<h3>Table: ' + table.charAt(0).toUpperCase() + table.slice(1) + '</h3>';
+            document.getElementById('table').addEventListener('change', function() {
+                var table = this.value;
+                var fieldsDiv = document.getElementById('fields');
+                var tableNameDiv = document.getElementById('table-name');
+                fieldsDiv.innerHTML = '';
+                tableNameDiv.innerHTML = '<h3>Table: ' + table.charAt(0).toUpperCase() + table.slice(1) + '</h3>';
 
-            // Define fields for each table
-            var fields = {
-                'admins': ['first_name', 'last_name', 'email', 'gov_id'],
-                'bikes': ['rider_id', 'tag_id', 'size', 'status', 'longitude', 'latitude'],
-                'nfc_tags': ['uid', 'client_id', 'admin_id', 'status'],
-                'transactions': ['client_id', 'invoice_num', 'payment_method', 'amount_due', 'status'],
-                'users': ['first_name', 'last_name', 'email', 'contact_num', 'gov_id']
-            };
+                // Define fields for each table
+                var fields = {
+                    'admins': ['first_name', 'last_name', 'email', 'gov_id'],
+                    'bikes': ['rider_id', 'tag_id', 'size', 'status', 'longitude', 'latitude'],
+                    'nfc_tags': ['uid', 'client_id', 'admin_id', 'status'],
+                    'transactions': ['client_id', 'invoice_num', 'payment_method', 'amount_due', 'status'],
+                    'users': ['first_name', 'last_name', 'email', 'contact_num', 'gov_id']
+                };
 
-            // Dynamically generate input fields for the selected table
-            fields[table].forEach(function(field) {
-                var label = document.createElement('label');
-                label.setAttribute('for', field);
-                label.textContent = field + ':';
+                // Dynamically generate input fields for the selected table
+                fields[table].forEach(function(field) {
+                    var label = document.createElement('label');
+                    label.setAttribute('for', field);
+                    label.textContent = field + ':';
 
-                var input;
-                if (table === 'bikes' && (field === 'rider_id' || field === 'tag_id')) {
-                    input = document.createElement('select');
-                    input.setAttribute('name', 'data[' + field + ']');
-                    input.setAttribute('id', field);
+                    var input;
+                    if (table === 'bikes' && (field === 'rider_id' || field === 'tag_id')) {
+                        input = document.createElement('select');
+                        input.setAttribute('name', 'data[' + field + ']');
+                        input.setAttribute('id', field);
 
-                    // Fetch existing riders or tags from the database
-                    fetch(`https://oct26.site/fetch_${field}.php`)
-                        .then(response => response.json())
-                        .then(data => {
-                            data.forEach(item => {
-                                var option = document.createElement('option');
-                                option.value = item.id;
-                                option.textContent = item.last_name || item.uid;
-                                input.appendChild(option);
+                        // Fetch existing riders or tags from the database
+                        fetch(`https://oct26.site/fetch_${field}.php`)
+                            .then(response => response.json())
+                            .then(data => {
+                                data.forEach(item => {
+                                    var option = document.createElement('option');
+                                    option.value = item.id;
+                                    option.textContent = item.last_name || item.uid;
+                                    input.appendChild(option);
+                                });
                             });
+                    } else if (table === 'bikes' && field === 'status') {
+                        input = document.createElement('select');
+                        input.setAttribute('name', 'data[' + field + ']');
+                        input.setAttribute('id', field);
+
+                        ['active', 'inactive', 'under maintenance', 'removed'].forEach(status => {
+                            var option = document.createElement('option');
+                            option.value = status;
+                            option.textContent = status;
+                            input.appendChild(option);
                         });
-                } else if (table === 'bikes' && field === 'status') {
-                    input = document.createElement('select');
-                    input.setAttribute('name', 'data[' + field + ']');
-                    input.setAttribute('id', field);
+                    } else if (table === 'bikes' && field === 'size') {
+                        input = document.createElement('select');
+                        input.setAttribute('name', 'data[' + field + ']');
+                        input.setAttribute('id', field);
 
-                    ['active', 'inactive', 'under maintenance', 'removed'].forEach(status => {
-                        var option = document.createElement('option');
-                        option.value = status;
-                        option.textContent = status;
-                        input.appendChild(option);
-                    });
-                } else if (table === 'bikes' && field === 'size') {
-                    input = document.createElement('select');
-                    input.setAttribute('name', 'data[' + field + ']');
-                    input.setAttribute('id', field);
+                        ['small', 'large'].forEach(size => {
+                            var option = document.createElement('option');
+                            option.value = size;
+                            option.textContent = size;
+                            input.appendChild(option);
+                        });
+                    } else if (table === 'nfc_tags' && (field === 'client_id' || field === 'admin_id')) {
+                        input = document.createElement('select');
+                        input.setAttribute('name', 'data[' + field + ']');
+                        input.setAttribute('id', field);
 
-                    ['small', 'large'].forEach(size => {
-                        var option = document.createElement('option');
-                        option.value = size;
-                        option.textContent = size;
-                        input.appendChild(option);
-                    });
-                } else {
-                    input = document.createElement('input');
-                    input.setAttribute('type', 'text');
-                    input.setAttribute('name', 'data[' + field + ']');
-                    input.setAttribute('id', field);
-                }
+                        fetch(`https://oct26.site/fetch_${field}.php`)
+                            .then(response => response.json())
+                            .then(data => {
+                                data.forEach(item => {
+                                    var option = document.createElement('option');
+                                    option.value = item.id;
+                                    option.textContent = item.last_name;
+                                    input.appendChild(option);
+                                });
+                            });
+                    } else if (table === 'nfc_tags' && field === 'status') {
+                        input = document.createElement('select');
+                        input.setAttribute('name', 'data[' + field + ']');
+                        input.setAttribute('id', field);
 
-                fieldsDiv.appendChild(label);
-                fieldsDiv.appendChild(input);
-                fieldsDiv.appendChild(document.createElement('br'));
+                        ['active', 'inactive', 'lost', 'blocked'].forEach(status => {
+                            var option = document.createElement('option');
+                            option.value = status;
+                            option.textContent = status;
+                            input.appendChild(option);
+                        });
+
+                    } else {
+                        input = document.createElement('input');
+                        input.setAttribute('type', 'text');
+                        input.setAttribute('name', 'data[' + field + ']');
+                        input.setAttribute('id', field);
+                    }
+
+                    fieldsDiv.appendChild(label);
+                    fieldsDiv.appendChild(input);
+                    fieldsDiv.appendChild(document.createElement('br'));
+                });
             });
-        });
         </script>
     </section>
 
