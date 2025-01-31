@@ -18,12 +18,14 @@ function displayTable($conn, $tableName, $fields)
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
-        echo "<table border='1'><tr>";
+        echo "<table class='styled-table'>";
+        echo "<thead><tr>";
         $fieldArray = explode(',', $fields);
         foreach ($fieldArray as $field) {
             echo "<th>" . trim($field) . "</th>";
         }
-        echo "</tr>";
+        echo "</tr></thead>";
+        echo "<tbody>";
         while ($row = $result->fetch_assoc()) {
             echo "<tr>";
             foreach ($fieldArray as $field) {
@@ -31,9 +33,9 @@ function displayTable($conn, $tableName, $fields)
             }
             echo "</tr>";
         }
-        echo "</table>";
+        echo "</tbody></table>";
     } else {
-        echo "0 results";
+        echo "<p>0 results</p>";
     }
 }
 
@@ -41,8 +43,6 @@ $table = null;
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['table'])) {
     $table = $_POST['table'];
 }
-
-
 ?>
 
 <!DOCTYPE html>
@@ -57,6 +57,61 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['table'])) {
     <link rel="stylesheet" href="css/technology-icons.css">
     <link rel="shortcut icon" type="image/png" href="img/favicon.png">
     <title>RD CED - Database Viewer</title>
+    <style>
+        /* Style for the table */
+        .styled-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            font-size: 0.9em;
+            font-family: sans-serif;
+            min-width: 400px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .styled-table thead tr {
+            background-color: #009879;
+            color: #ffffff;
+            text-align: left;
+        }
+
+        .styled-table th,
+        .styled-table td {
+            padding: 12px 15px;
+        }
+
+        .styled-table tbody tr {
+            border-bottom: 1px solid #dddddd;
+        }
+
+        .styled-table tbody tr:nth-of-type(even) {
+            background-color: #f3f3f3;
+        }
+
+        .styled-table tbody tr:last-of-type {
+            border-bottom: 2px solid #009879;
+        }
+
+        .styled-table tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        /* Style for buttons */
+        .btn {
+            background-color: #009879;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+        }
+
+        .btn:hover {
+            background-color: #007f63;
+        }
+    </style>
 </head>
 
 <body>
@@ -72,8 +127,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['table'])) {
                 <a href="#" id="menu_icon"></a>
                 <ul id="menu">
                     <li><a href="index.html" class="current">Home</a></li>
-                    <li><a href="laboratory.html">Laboratory</a></li>
-                    <li><a href="research.html">Research</a></li>
+                    <li><a href="add_record.php">Add Record</a></li>
+                    <li><a href="delete_record.php">Delete Record</a></li>
                     <li><a href="#">Services</a>
                         <ul class="hidden">
                             <li><a href="3dprinting.html">3D Printing</a></li>
