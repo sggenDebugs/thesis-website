@@ -12,7 +12,7 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-$sql = "SELECT id, name FROM users"; // Adjust the table and column names as needed
+$sql = "SELECT id, last_name FROM users"; // Adjust the table and column names as needed
 $result = $conn->query($sql);
 
 $riders = [];
