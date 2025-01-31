@@ -180,7 +180,7 @@ $conn->close();
 
             // Define fields for each table
             var fields = {
-                'admins': ['first_name', 'last_name', 'email', 'gov_id'], // Only these fields are shown
+                'admins': ['first_name', 'last_name', 'email', 'gov_id'],
                 'bikes': ['rider_id', 'tag_id', 'size', 'status', 'longitude', 'latitude'],
                 'nfc_tags': ['uid', 'client_id', 'admin_id', 'status'],
                 'transactions': ['client_id', 'invoice_num', 'payment_method', 'amount_due', 'status'],
@@ -193,10 +193,51 @@ $conn->close();
                 label.setAttribute('for', field);
                 label.textContent = field + ':';
 
-                var input = document.createElement('input');
-                input.setAttribute('type', 'text');
-                input.setAttribute('name', 'data[' + field + ']');
-                input.setAttribute('id', field);
+                var input;
+                if (table === 'bikes' && (field === 'rider_id' || field === 'tag_id')) {
+                    input = document.createElement('select');
+                    input.setAttribute('name', 'data[' + field + ']');
+                    input.setAttribute('id', field);
+
+                    // Fetch existing riders or tags from the database
+                    fetch(`fetch_${field}.php`)
+                        .then(response => response.json())
+                        .then(data => {
+                            data.forEach(item => {
+                                var option = document.createElement('option');
+                                option.value = item.id;
+                                option.textContent = item.name;
+                                input.appendChild(option);
+                            });
+                        });
+                } else if (table === 'bikes' && field === 'status') {
+                    input = document.createElement('select');
+                    input.setAttribute('name', 'data[' + field + ']');
+                    input.setAttribute('id', field);
+
+                    ['active', 'inactive', 'under maintenance', 'removed'].forEach(status => {
+                        var option = document.createElement('option');
+                        option.value = status;
+                        option.textContent = status;
+                        input.appendChild(option);
+                    });
+                } else if (table === 'bikes' && field === 'size') {
+                    input = document.createElement('select');
+                    input.setAttribute('name', 'data[' + field + ']');
+                    input.setAttribute('id', field);
+
+                    ['small', 'large'].forEach(size => {
+                        var option = document.createElement('option');
+                        option.value = size;
+                        option.textContent = size;
+                        input.appendChild(option);
+                    });
+                } else {
+                    input = document.createElement('input');
+                    input.setAttribute('type', 'text');
+                    input.setAttribute('name', 'data[' + field + ']');
+                    input.setAttribute('id', field);
+                }
 
                 fieldsDiv.appendChild(label);
                 fieldsDiv.appendChild(input);
