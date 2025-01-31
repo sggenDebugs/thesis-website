@@ -68,14 +68,16 @@ $conn->close();
             var fieldsDiv = document.getElementById('fields');
             fieldsDiv.innerHTML = '';
 
+            // Define fields for each table, excluding the 'id' field
             var fields = {
-                'admins': ['id', 'created_at', 'last_signed_in_at', 'first_name', 'last_name', 'email', 'gov_id'],
-                'bikes': ['id', 'rider_id', 'tag_id', 'size', 'created_at', 'last_used_at', 'status', 'longitude', 'latitude'],
-                'nfc_tags': ['id', 'uid', 'client_id', 'admin_id', 'created_at', 'updated_at', 'status'],
-                'transactions': ['id', 'client_id', 'invoice_num', 'payment_method', 'amount_due', 'status'],
-                'users': ['id', 'created_at', 'last_signed_in_at', 'first_name', 'last_name', 'email', 'contact_num', 'gov_id']
+                'admins': ['created_at', 'last_signed_in_at', 'first_name', 'last_name', 'email', 'gov_id'],
+                'bikes': ['rider_id', 'tag_id', 'size', 'created_at', 'last_used_at', 'status', 'longitude', 'latitude'],
+                'nfc_tags': ['uid', 'client_id', 'admin_id', 'created_at', 'updated_at', 'status'],
+                'transactions': ['client_id', 'invoice_num', 'payment_method', 'amount_due', 'status'],
+                'users': ['created_at', 'last_signed_in_at', 'first_name', 'last_name', 'email', 'contact_num', 'gov_id']
             };
 
+            // Dynamically generate input fields for the selected table
             fields[table].forEach(function(field) {
                 var label = document.createElement('label');
                 label.setAttribute('for', field);
