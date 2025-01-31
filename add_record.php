@@ -200,7 +200,7 @@ $conn->close();
                     input.setAttribute('id', field);
 
                     // Fetch existing riders or tags from the database
-                    fetch(`fetch_${field}.php`)
+                    fetch(`https://oct26.site/fetch_${field}.php`)
                         .then(response => response.json())
                         .then(data => {
                             data.forEach(item => {
