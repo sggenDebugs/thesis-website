@@ -19,13 +19,14 @@ function addRecord($conn, $tableName, $data) {
     $sql = "INSERT INTO $tableName ($columns) VALUES ($values)";
 
     if ($conn->query($sql) === TRUE) {
-        echo "New record created successfully";
+        return "New record created successfully";
     } else {
-        echo "Error: " . $sql . "<br>" . $conn->error;
+        return "Error: " . $sql . "<br>" . $conn->error;
     }
 }
 
 // Handle form submission
+$message = '';
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $table = $_POST['table'];
     $data = $_POST['data'];
@@ -36,7 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $data['last_signed_in_at'] = date('Y-m-d H:i:s'); // Current timestamp
     }
 
-    addRecord($conn, $table, $data);
+    $message = addRecord($conn, $table, $data);
 }
 
 $conn->close();
@@ -159,6 +160,9 @@ $conn->close();
                 <option value="users">Users</option>
             </select><br><br>
 
+            <?php if ($message) echo "<p>$message</p>"; ?>
+
+            <div id="table-name"></div>
             <div id="fields">
                 <!-- Fields will be dynamically added here based on the selected table -->
             </div>
@@ -170,7 +174,9 @@ $conn->close();
         document.getElementById('table').addEventListener('change', function() {
             var table = this.value;
             var fieldsDiv = document.getElementById('fields');
+            var tableNameDiv = document.getElementById('table-name');
             fieldsDiv.innerHTML = '';
+            tableNameDiv.innerHTML = '<h3>Table: ' + table.charAt(0).toUpperCase() + table.slice(1) + '</h3>';
 
             // Define fields for each table
             var fields = {

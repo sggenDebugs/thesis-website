@@ -14,13 +14,14 @@ if ($conn->connect_error) {
 
 function displayTable($conn, $tableName, $fields)
 {
+    $fieldArray = explode(", ", $fields);
     $sql = "SELECT $fields FROM $tableName";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
+        echo "<h3>Table: " . ucfirst($tableName) . "</h3>"; // Display table name
         echo "<table class='styled-table'>";
         echo "<thead><tr>";
-        $fieldArray = explode(',', $fields);
         foreach ($fieldArray as $field) {
             echo "<th>" . trim($field) . "</th>";
         }
