@@ -152,7 +152,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['table'])) {
     <!-- Database Table Display Section -->
     <section class="wrapper">
         <h2>Database Tables</h2>
-        <form method="post" action="display_table.php" class="form-style">
+        <form method="post" action="index.php" class="form-style">
             <button type="submit" name="table" value="admins" class="btn">Show Admins</button>
             <button type="submit" name="table" value="bikes" class="btn">Show Bikes</button>
             <button type="submit" name="table" value="nfc_tags" class="btn">Show NFC Tags</button>
