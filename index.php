@@ -53,7 +53,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['table'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
     <link rel="stylesheet" href="css/font-awesome.min.css">
     <link rel="stylesheet" href="css/technology-icons.css">
     <link rel="shortcut icon" type="image/png" href="img/favicon.png">
