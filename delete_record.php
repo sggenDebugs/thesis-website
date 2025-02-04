@@ -12,14 +12,14 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Handle form submission
+// Handle form submission and delete mechanism
 $message = '';
 $selected_table = $_POST['table'] ?? null;
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_ids'])) {
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_ids'])) { // isset determines if a variable is set and is not NULL
     $delete_ids = $_POST['delete_ids'];
     foreach ($delete_ids as $id) {
         $conn->query("DELETE FROM $selected_table WHERE id = $id");
-    }
+    } 
     $message = "Selected records deleted successfully";
 }
 ?>

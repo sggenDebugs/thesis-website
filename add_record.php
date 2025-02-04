@@ -154,6 +154,7 @@ $conn->close();
         <form method="post" action="add_record.php" class="form-style">
             <label for="table">Table Name:</label>
             <select name="table" id="table">
+                <option value="">Select a table</option>
                 <option value="admins">Admins</option>
                 <option value="bikes">Bikes</option>
                 <option value="nfc_tags">NFC Tags</option>
