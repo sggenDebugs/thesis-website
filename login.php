@@ -1,5 +1,6 @@
 <?php
 session_start(); // Start the session
+require 'classes/user.php';
 
 $servername = "127.0.0.1";
 $email = "u388284544_sggen";
@@ -8,6 +9,7 @@ $dbname = "u388284544_server";
 
 // Create connection
 $conn = new mysqli($servername, $email, $password, $dbname);
+$user = new User($conn);
 
 // Check connection
 if ($conn->connect_error) {
@@ -23,26 +25,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($email) || empty($password)) {
         $error = "Please fill in all fields.";
     } else {
-        // Fetch user from the database
-        $sql = "SELECT id, email, password FROM users WHERE email = ?";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param('s', $email);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $user = $result->fetch_assoc();
-
-        if ($user && password_verify($password, $user['password'])) {
-            // Password is correct, start a session
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['email'] = $user['email'];
-
-            // Redirect to a dashboard or home page
-            header("Location: dashboard.php");
+        $result = $user->login($email, $password); // Call the login method from User class
+        if($result === true) {
+            header('Location: dashboard.php');
             exit();
         } else {
-            $error = "Invalid email or password.";
+            $error = $result;
         }
-        $stmt->close();
     }
 }
 $conn->close();
@@ -69,6 +58,7 @@ $conn->close();
                 <input type="password" id="password" name="password" required>
             </div>
             <button type="submit">Login</button>
+            <a href="register.php">Register</a>
         </form>
         <?php if (isset($error)): ?>
             <p class="error"><?php echo $error; ?></p>
