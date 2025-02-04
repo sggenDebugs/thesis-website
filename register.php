@@ -1,3 +1,45 @@
+<?php
+session_start();
+require 'classes/user.php'; // Include the User class
+
+$servername = "127.0.0.1";
+$email = "u388284544_sggen";
+$password = "xB@akashinji420x";
+$dbname = "u388284544_server";
+
+$error = "";
+$success = "";
+
+// Database connection
+$conn = new mysqli($servername, $email, $password, $dbname);
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Create a User object
+$user = new User($conn);
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Get form data
+    $first_name = trim($_POST['first_name']);
+    $last_name = trim($_POST['last_name']);
+    $email = trim($_POST['email']);
+    $password = trim($_POST['password']);
+    $contact_number = trim($_POST['contact_number']);
+    $government_id = trim($_POST['government_id']);
+
+    // Call the register method
+    $result = $user->register($first_name, $last_name, $email, $password, $contact_number, $government_id);
+
+    if ($result === "Registration successful! You can now <a href='login.php'>login</a>.") {
+        $success = $result;
+    } else {
+        $error = $result;
+    }
+}
+$conn->close();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
