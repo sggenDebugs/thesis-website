@@ -60,7 +60,7 @@ class User {
             }
             
         } else {
-            return "Registration failed. Please try again.";
+            return "Login failed. Please try again.";
         }
         
         
