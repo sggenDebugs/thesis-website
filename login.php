@@ -58,6 +58,7 @@ $conn->close();
                 <input type="password" id="password" name="password" required>
             </div>
             <button type="submit">Login</button>
+            <a href="register.php">Register</a>
         </form>
         <?php if (isset($error)): ?>
             <p class="error"><?php echo $error; ?></p>
