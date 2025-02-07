@@ -92,6 +92,7 @@ $conn->close();
                 <input type="text" id="government_id" name="government_id" required>
             </div>
             <button type="submit">Register</button>
+            <button type="button" onclick="window.location.href='login.php'">Go to Login</button>
         </form>
         <?php if (isset($error) && $error): ?>
             <p class="error"><?php echo $error; ?></p>
