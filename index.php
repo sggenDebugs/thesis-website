@@ -12,38 +12,7 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-function displayTable($conn, $tableName, $fields)
-{
-    $fieldArray = explode(", ", $fields);
-    $sql = "SELECT $fields FROM $tableName";
-    $result = $conn->query($sql);
-
-    if ($result->num_rows > 0) {
-        echo "<h3>Table: " . ucfirst($tableName) . "</h3>"; // Display table name
-        echo "<table class='styled-table'>";
-        echo "<thead><tr>";
-        foreach ($fieldArray as $field) {
-            echo "<th>" . trim($field) . "</th>";
-        }
-        echo "</tr></thead>";
-        echo "<tbody>";
-        while ($row = $result->fetch_assoc()) {
-            echo "<tr>";
-            foreach ($fieldArray as $field) {
-                echo "<td>" . $row[trim($field)] . "</td>";
-            }
-            echo "</tr>";
-        }
-        echo "</tbody></table>";
-    } else {
-        echo "<p>0 results</p>";
-    }
-}
-
-$table = null;
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['table'])) {
-    $table = $_POST['table'];
-}
+$table = $_POST['table'] ?? null;
 ?>
 
 <!DOCTYPE html>
@@ -163,35 +132,51 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['table'])) {
     <section class="wrapper">
         <h2>Database Tables</h2>
         <form method="post" action="index.php" class="form-style">
-            <button type="submit" name="table" value="admins" class="btn">Show Admins</button>
-            <button type="submit" name="table" value="bikes" class="btn">Show Bikes</button>
-            <button type="submit" name="table" value="nfc_tags" class="btn">Show NFC Tags</button>
-            <button type="submit" name="table" value="transactions" class="btn">Show Transactions</button>
-            <button type="submit" name="table" value="users" class="btn">Show Users</button>
+            <label for="table">Table Name:</label>
+            <select name="table" id="table" onchange="this.form.submit()">
+                <option value="">Select a table</option>
+                <option value="admins" <?= $table == 'admins' ? 'selected' : '' ?>>Admins</option>
+                <option value="bikes" <?= $table == 'bikes' ? 'selected' : '' ?>>Bikes</option>
+                <option value="nfc_tags" <?= $table == 'nfc_tags' ? 'selected' : '' ?>>NFC Tags</option>
+                <option value="transactions" <?= $table == 'transactions' ? 'selected' : '' ?>>Transactions</option>
+                <option value="users" <?= $table == 'users' ? 'selected' : '' ?>>Users</option>
+            </select><br><br>
         </form>
+
+        <?php if ($table): ?>
         <?php
-        if ($table) {
-            switch ($table) {
-                case 'admins':
-                    displayTable($conn, 'admins', 'id, created_at, last_signed_in_at, first_name, last_name, email, gov_id');
-                    break;
-                case 'bikes':
-                    displayTable($conn, 'bikes', 'id, rider_id, tag_id, size, created_at, last_used_at, status, longitude, latitude');
-                    break;
-                case 'nfc_tags':
-                    displayTable($conn, 'nfc_tags', 'id, uid, client_id, admin_id, created_at, updated_at, status');
-                    break;
-                case 'transactions':
-                    displayTable($conn, 'transactions', 'id, client_id, invoice_num, payment_method, amount_due, status');
-                    break;
-                case 'users':
-                    displayTable($conn, 'users', 'id, created_at, last_signed_in_at, first_name, last_name, email, contact_num, gov_id');
-                    break;
+        // Get table columns
+            $result = $conn->query("SHOW COLUMNS FROM $table");
+            $columns = [];
+            while ($row = $result->fetch_assoc()) {
+                $columns[] = $row['Field'];
             }
-        }
-        
-        $conn->close();
-        ?>
+
+            // Display records
+            $result = $conn->query("SELECT * FROM $table");
+            if ($result->num_rows > 0): ?>
+                <table class="styled-table">
+                    <thead>
+                        <tr>
+                            <?php foreach ($columns as $column): ?>
+                                <th><?= ucfirst(str_replace('_', ' ', $column)) ?></th>
+                            <?php endforeach; ?>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php while ($row = $result->fetch_assoc()): ?>
+                        <tr>
+                            <?php foreach ($columns as $column): ?>
+                                <td><?= $row[$column] ?></td>
+                            <?php endforeach; ?>
+                        </tr>
+                        <?php endwhile; ?>
+                    </tbody>
+                </table>
+            <?php else: ?>
+                <p>0 results</p>
+            <?php endif; ?>
+        <?php endif; ?>
     </section>
 
     <!-- Footer Section -->
@@ -209,3 +194,4 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['table'])) {
 </body>
 
 </html>
+<?php $conn->close(); ?>
