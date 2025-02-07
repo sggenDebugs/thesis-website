@@ -12,7 +12,7 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-$table = $_POST['table'] ?? null;
+$selectedtable = $_POST['table'] ?? null;
 ?>
 
 <!DOCTYPE html>
@@ -135,25 +135,25 @@ $table = $_POST['table'] ?? null;
             <label for="table">Table Name:</label>
             <select name="table" id="table" onchange="this.form.submit()">
                 <option value="">Select a table</option>
-                <option value="admins" <?= $table == 'admins' ? 'selected' : '' ?>>Admins</option>
-                <option value="bikes" <?= $table == 'bikes' ? 'selected' : '' ?>>Bikes</option>
-                <option value="nfc_tags" <?= $table == 'nfc_tags' ? 'selected' : '' ?>>NFC Tags</option>
-                <option value="transactions" <?= $table == 'transactions' ? 'selected' : '' ?>>Transactions</option>
-                <option value="users" <?= $table == 'users' ? 'selected' : '' ?>>Users</option>
+                <option value="admins" <?= $selectedtable == 'admins' ? 'selected' : '' ?>>Admins</option>
+                <option value="bikes" <?= $selectedtable == 'bikes' ? 'selected' : '' ?>>Bikes</option>
+                <option value="nfc_tags" <?= $selectedtable == 'nfc_tags' ? 'selected' : '' ?>>NFC Tags</option>
+                <option value="transactions" <?= $selectedtable == 'transactions' ? 'selected' : '' ?>>Transactions</option>
+                <option value="users" <?= $selectedtable == 'users' ? 'selected' : '' ?>>Users</option>
             </select><br><br>
         </form>
 
-        <?php if ($table): ?>
+        <?php if ($selectedtable): ?>
         <?php
         // Get table columns
-            $result = $conn->query("SHOW COLUMNS FROM $table");
+            $result = $conn->query("SHOW COLUMNS FROM $selectedtable");
             $columns = [];
             while ($row = $result->fetch_assoc()) {
                 $columns[] = $row['Field'];
             }
 
             // Display records
-            $result = $conn->query("SELECT * FROM $table");
+            $result = $conn->query("SELECT * FROM $selectedtable");
             if ($result->num_rows > 0): ?>
                 <table class="styled-table">
                     <thead>
