@@ -1,4 +1,10 @@
 <?php
+session_start();
+if (!isset($_SESSION['email'])) {
+    header('Location: login.php');
+    exit();
+}
+
 // Include the Bike class
 require 'classes/bike.php';
 
@@ -82,6 +88,7 @@ $availableBikes = $bikeManager->getAvailableBikes();
             </tbody>
         </table>
     <?php endif; ?>
+    <a href="dashboard.php">Back to Dashboard</a>
 </body>
 </html>
 
