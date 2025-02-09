@@ -31,6 +31,7 @@ $availableBikes = $bikeManager->getAvailableBikes();
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -40,28 +41,37 @@ $availableBikes = $bikeManager->getAvailableBikes();
             font-family: Arial, sans-serif;
             margin: 20px;
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
         }
-        table, th, td {
+
+        table,
+        th,
+        td {
             border: 1px solid #ddd;
         }
-        th, td {
+
+        th,
+        td {
             padding: 10px;
             text-align: left;
         }
+
         th {
             background-color: #f4f4f4;
         }
+
         .no-bikes {
             color: #888;
             font-style: italic;
         }
     </style>
 </head>
+
 <body>
-    <h1>Available Bikes</h1>
+    <h1>Choose Available Bikes Here!</h1>
     <?php if (empty($availableBikes)): ?>
         <p class="no-bikes">No bikes available at the moment.</p>
     <?php else: ?>
@@ -71,7 +81,6 @@ $availableBikes = $bikeManager->getAvailableBikes();
                     <th>ID</th>
                     <th>Location</th>
                     <th>Hourly Rate</th>
-                    <th>Status</th>
                     <th>Last Used At</th>
                 </tr>
             </thead>
@@ -80,9 +89,11 @@ $availableBikes = $bikeManager->getAvailableBikes();
                     <tr>
                         <td><?php echo htmlspecialchars($bike->getId()); ?></td>
                         <td><?php echo htmlspecialchars($bike->getLocation()); ?></td>
-                        <td>$<?php echo htmlspecialchars($bike->getHourlyRate()); ?> / hour</td>
-                        <td><?php echo htmlspecialchars($bike->getStatus()); ?></td>
+                        <td><?php echo htmlspecialchars($bike->getHourlyRate()); ?> Php / hour</td>
                         <td><?php echo htmlspecialchars($bike->getLastUsedAt()); ?></td>
+                        <td>
+                            <a href="rent_bike.php?bike_id=<?php echo $bike->getId(); ?>">Rent Now</a>
+                        </td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
@@ -90,6 +101,7 @@ $availableBikes = $bikeManager->getAvailableBikes();
     <?php endif; ?>
     <a href="dashboard.php">Back to Dashboard</a>
 </body>
+
 </html>
 
 <?php

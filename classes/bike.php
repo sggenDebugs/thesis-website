@@ -45,7 +45,7 @@ class Bike
             SELECT id, user_id, tag_id, created_at, last_used_at, 
                    status, location, hourly_rate, reserved_until 
             FROM bikes 
-            WHERE status = 'active' 
+            WHERE status = 'available' 
             AND user_id IS NULL 
             AND (reserved_until IS NULL OR reserved_until < ?)
         ";
@@ -79,7 +79,7 @@ class Bike
             UPDATE bikes 
             SET status = 'reserved', reserved_until = ?
             WHERE id = ? 
-            AND status = 'active'
+            AND status = 'available'
             AND user_id IS NULL
         ";
 
