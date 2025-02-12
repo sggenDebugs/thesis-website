@@ -1,6 +1,6 @@
 <?php
 session_start();
-require 'Bike.php';
+require 'classes/bike.php';
 
 // Redirect if not authenticated or missing bike ID
 if (!isset($_SESSION['user_id']) || !isset($_GET['bike_id'])) {
@@ -8,8 +8,13 @@ if (!isset($_SESSION['user_id']) || !isset($_GET['bike_id'])) {
     exit();
 }
 
+$servername = "127.0.0.1";
+$username = "u388284544_sggen";
+$password = "xB@akashinji420x";
+$dbname = "u388284544_server";
+
 // Database connection
-$mysqli = new mysqli("127.0.0.1", "u388284544_sggen", "xB@akashinji420x", "u388284544_server");
+$mysqli = new mysqli($servername, $username, $password, $dbname);
 $bikeManager = new Bike($mysqli);
 $bike_id = intval($_GET['bike_id']);
 
@@ -29,11 +34,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         case 'credit_card':
             // Process Stripe payment
             require_once 'vendor/autoload.php';
-            \Stripe\Stripe::setApiKey('sk_test_your_stripe_key');
+            \Stripe\Stripe::setApiKey('sk_test_51QrhroCGKzC3AGI8bAzGdkeZzFynXk2rLkyBbzWJWNIrYrYQdlA9hKmNRfGskcHfE5JCzEiiKlJMXwQ4CZcpalT300K7DRYjXn');
             
             try {
                 $paymentIntent = \Stripe\PaymentIntent::create([
-                    'amount' => $bike->getHourlyRate() * 100, // Amount in cents
+                    'amount' => 50 * 100, // Amount in cents
                     'currency' => 'php',
                     'metadata' => [
                         'bike_id' => $bike_id,

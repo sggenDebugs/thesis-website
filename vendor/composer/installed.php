@@ -3,7 +3,7 @@
         'name' => 'sggen/thesis-website',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '2f75d5e631de209851c604fb80c4f426c64933b7',
+        'reference' => 'c91b93bdc1713b701b160f0f17c1a1c89134991a',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -13,7 +13,7 @@
         'sggen/thesis-website' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '2f75d5e631de209851c604fb80c4f426c64933b7',
+            'reference' => 'c91b93bdc1713b701b160f0f17c1a1c89134991a',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
