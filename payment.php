@@ -19,7 +19,7 @@ $bikeManager = new Bike($mysqli);
 $bike_id = intval($_GET['bike_id']);
 
 // Verify bike reservation status
-$bike = Bike::getBikeById($mysqli, $bike_id);
+$bike = Bike::getBikeById($mysqli, $bike_id); // call the assigned bike
 if (!$bike || $bike->getStatus() !== 'reserved') {
     header("Location: display_bikes.php");
     exit();
@@ -37,18 +37,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             \Stripe\Stripe::setApiKey('sk_test_51QrhroCGKzC3AGI8bAzGdkeZzFynXk2rLkyBbzWJWNIrYrYQdlA9hKmNRfGskcHfE5JCzEiiKlJMXwQ4CZcpalT300K7DRYjXn');
             
             try {
-                $paymentIntent = \Stripe\PaymentIntent::create([
-                    'amount' => 50 * 100, // Amount in cents
-                    'currency' => 'php',
-                    'metadata' => [
-                        'bike_id' => $bike_id,
-                        'user_id' => $_SESSION['user_id']
-                    ]
+                $checkout_session = \Stripe\Checkout\Session::create([
+                    "mode" => "payment",
+                    "success_url" => "http://localhost:8000/success.php?bike_id=$bike_id",
+                    "line_items" => [[
+                        "price_data" => [
+                            "currency" => "php",
+                            "product_data" => [
+                                "name" => "Bike Rental",
+                            ],
+                            "unit_amount" => $bike->getHourlyRate() * 100,
+                        ],
+                        "quantity" => 1,
+                    ]],
                 ]);
                 
-                $_SESSION['payment_intent'] = $paymentIntent->id;
-                header("Location: " . $paymentIntent->next_action->redirect_to_url->url);
+                http_response_code(303);
+                $_SESSION['payment_intent'] = $checkout_session->id;
+                header("Location: " . $checkout_session->url);
                 exit();
+
             } catch (Exception $e) {
                 $error = "Stripe error: " . $e->getMessage();
             }
@@ -130,7 +138,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
 
             <button type="submit">Continue to Payment</button>
-            <a href="display_bikes.php">Cancel</a>
+            <a href="cancel_reservation.php?bike_id=<?= htmlspecialchars($bike->getId()) ?>">Cancel</a>
         </form>
     </div>
 </body>
