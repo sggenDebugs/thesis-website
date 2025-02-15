@@ -3,7 +3,7 @@
 **Goal:** Build essential features for user registration, payment, NFC assignment, and bike unlocking.  
 
 #### **Tasks:**  
-1. **User Authentication (Week 1)**  
+<!-- 1. **User Authentication (Week 1)**  
    - Create registration/login pages with form validation.  
    - Implement password hashing (e.g., `password_hash()` in PHP).  
    - Add session management for logged-in users.  
@@ -15,7 +15,7 @@
      - Integrate a payment gateway (e.g., PayPal Sandbox or Stripe Test Mode).  
      - Create a "Cash Payment" option:  
        - Allow users to select cash payment, which sets the transaction status to `pending_approval`.  
-       - Add an admin interface to approve cash payments and mark transactions as `completed`.  
+       - Add an admin interface to approve cash payments and mark transactions as `completed`.   -->
 
 3. **NFC Tag Assignment (Week 2)**  
    - Develop logic to assign an available NFC tag (from `nfc_tags` table) after successful payment.  
