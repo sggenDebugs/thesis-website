@@ -12,15 +12,16 @@ elseif (!isset($_GET['bike_id'])) {
 }
 
 // Verify Stripe payment success
-// if (isset($_GET['payment_intent'])) {
+// if (isset($_GET['checkout_session'])) {
 //     \Stripe\Stripe::setApiKey('sk_test_51QrhroCGKzC3AGI8bAzGdkeZzFynXk2rLkyBbzWJWNIrYrYQdlA9hKmNRfGskcHfE5JCzEiiKlJMXwQ4CZcpalT300K7DRYjXn');
-//     $paymentIntent = \Stripe\PaymentIntent::retrieve($_GET['payment_intent']);
+//     $checkout_session = \Stripe\checkout_session::retrieve($_GET['checkout_session']);
+//     $nfc_tag_id = $_SESSION['nfc_tag_id'];
     
-//     if ($paymentIntent->status === 'succeeded') {
+//     if ($checkout_session->status === 'succeeded') {
 //         $bikeManager->assignBike(
-//             $paymentIntent->metadata->bike_id,
-//             $paymentIntent->metadata->user_id,
-//             1 // NFC tag ID from your system
+//             $checkout_session->metadata->bike_id,
+//             $checkout_session->metadata->user_id,
+//             $nfc_tag_id // NFC tag ID from your system
 //         );
 //     }
 // }
