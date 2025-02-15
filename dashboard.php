@@ -17,5 +17,6 @@
     <body>
         <h1>Welcome to the Dashboard</h1>
         <p>You are logged in as <?php echo $_SESSION['email']; ?>.</p>
-        <a href="logout.php">Logout</a>
+        <a href="available_bikes.php">View Available Bikes</a>
+        <a href="api/logout.php">Logout</a>
 </html>
