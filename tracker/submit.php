@@ -3,10 +3,12 @@ require 'config.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Calculate values
+    $item_name = $_POST['item_name'];
     $cost = (float)$_POST['cost'];
     $quantity = (int)$_POST['quantity'];
     $total = $cost * $quantity;
     $paymentPerMember = $total / 3;
+    $person_name = $_POST['person_name'];
 
     // Handle file upload
     $receiptPath = null;
@@ -33,11 +35,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Insert into database
     try {
         $stmt = $pdo->prepare("INSERT INTO expenses 
-            (item_name, cost, receipt_path, quantity, total, payment_per_member)
-            VALUES (?, ?, ?, ?, ?, ?)");
+            (person_name, item_name, cost, receipt_path, quantity, total, payment_per_member)
+            VALUES (?, ?, ?, ?, ?, ?, ?)");
         
         $stmt->execute([
-            $_POST['item_name'],
+            $person_name,
+            $item_name,
             $cost,
             $receiptPath,
             $quantity,
