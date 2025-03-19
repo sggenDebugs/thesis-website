@@ -2,15 +2,31 @@
 require 'config.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Calculate values
+    $cost = (float)$_POST['cost'];
+    $quantity = (int)$_POST['quantity'];
+    $total = $cost * $quantity;
+    $paymentPerMember = $total / 3;
+
     // Handle file upload
     $receiptPath = null;
     if (isset($_FILES['receipt']) && $_FILES['receipt']['error'] === UPLOAD_ERR_OK) {
         $targetDir = "uploads/";
-        $fileName = uniqid() . '_' . basename($_FILES['receipt']['name']);
-        $targetFile = $targetDir . $fileName;
+        if (!file_exists($targetDir)) {
+            mkdir($targetDir, 0755, true);
+        }
         
-        if (move_uploaded_file($_FILES['receipt']['tmp_name'], $targetFile)) {
-            $receiptPath = $targetFile;
+        // Validate image
+        $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+        $detectedType = mime_content_type($_FILES['receipt']['tmp_name']);
+        
+        if (in_array($detectedType, $allowedTypes)) {
+            $fileName = uniqid() . '_' . basename($_FILES['receipt']['name']);
+            $targetFile = $targetDir . $fileName;
+            
+            if (move_uploaded_file($_FILES['receipt']['tmp_name'], $targetFile)) {
+                $receiptPath = $targetFile;
+            }
         }
     }
 
@@ -22,14 +38,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         $stmt->execute([
             $_POST['item_name'],
-            $_POST['cost'],
+            $cost,
             $receiptPath,
-            $_POST['quantity'],
-            $_POST['total'],
-            $_POST['payment_per_member']
+            $quantity,
+            $total,
+            $paymentPerMember
         ]);
         
-        header("Location: index.html?success=1");
+        header("Location: display.php");
     } catch(PDOException $e) {
         die("Error: " . $e->getMessage());
     }

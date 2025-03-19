@@ -33,10 +33,10 @@ try {
         <?php foreach ($expenses as $expense): ?>
         <tr>
             <td><?= htmlspecialchars($expense['item_name']) ?></td>
-            <td>$<?= number_format($expense['cost'], 2) ?></td>
+            <td><?= number_format($expense['cost'], 2) ?> Php</td>
             <td><?= $expense['quantity'] ?></td>
-            <td>$<?= number_format($expense['total'], 2) ?></td>
-            <td><?= htmlspecialchars($expense['payment_per_member']) ?></td>
+            <td><?= number_format($expense['total'], 2) ?> Php</td>
+            <td><?= htmlspecialchars($expense['payment_per_member']) ?> Php</td>
             <td>
                 <?php if ($expense['receipt_path']): ?>
                     <a href="<?= $expense['receipt_path'] ?>" target="_blank">View Receipt</a>
@@ -46,5 +46,6 @@ try {
         </tr>
         <?php endforeach; ?>
     </table>
+    <a href="index.html">Back to Input</a>
 </body>
 </html>
