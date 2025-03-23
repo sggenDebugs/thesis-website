@@ -4,10 +4,36 @@
 <head>
     <title>Expense Tracker</title>
     <style>
+        :root {
+            --primary-color: #2196F3;
+            --secondary-color: #1976D2;
+            --background-color: #f5f5f5;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+
+        h1 {
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+
         .container {
             max-width: 600px;
             margin: 0 auto;
             padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
         }
 
         .form-group {
@@ -17,11 +43,45 @@
         label {
             display: block;
             margin-bottom: 5px;
+            font-weight: bold;
         }
 
-        input {
+        input, select {
             width: 100%;
-            padding: 8px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1em;
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: var(--secondary-color);
+        }
+
+        a {
+            display: inline-block;
+            margin-top: 20px;
+            text-align: center;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-size: 1em;
+            transition: color 0.3s;
+        }
+
+        a:hover {
+            color: var(--secondary-color);
         }
     </style>
 </head>
@@ -49,7 +109,7 @@
                 <label>Receipt (optional - PNG, JPG):</label>
                 <input type="file" name="receipt" accept="image/*">
             </div>
-            <!-- Add this field after the opening form tag -->
+
             <div class="form-group">
                 <label>Purchased By:</label>
                 <select name="person_name" required>
@@ -59,6 +119,7 @@
                     <option value="HANNAH">HANNAH</option>
                 </select>
             </div>
+
             <button type="submit">Submit</button>
         </form>
         <a href="/tracker/display.php">View Expenses</a>
