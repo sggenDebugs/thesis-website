@@ -2,7 +2,7 @@
 // session_start();
 // Add admin authentication check here
 
-require "config.php";
+require "../config.php";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $uid = $conn->real_escape_string($_POST['uid']);

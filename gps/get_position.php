@@ -1,7 +1,7 @@
 <?php
 header('Content-Type: application/json');
 
-require 'config.php';
+require '../config.php';
 $bike_id = $_GET['bike_id'];
 
 $result = $conn->query("

@@ -8,7 +8,7 @@ $lat = floatval($_GET['lat']);
 $lng = floatval($_GET['lng']);
 
 try {
-    require_once 'config.php';
+    require_once '../config.php';
     // Update bike location
     $stmt = $conn->prepare("
         UPDATE bikes 

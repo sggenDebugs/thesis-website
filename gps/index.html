@@ -46,7 +46,7 @@
         }
 
         function updatePosition() {
-            fetch('get_position.php?bike_id=1')
+            fetch('/gps/get_position.php?bike_id=1')
                 .then(response => response.json())
                 .then(data => {
                     const pos = { 

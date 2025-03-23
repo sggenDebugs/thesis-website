@@ -1,7 +1,7 @@
 <?php
 // session_start();
 // Add admin authentication check here
-require "config.php";
+require "../config.php";
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
