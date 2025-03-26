@@ -14,10 +14,12 @@
 <body>
     <h1>Live Bike Tracking</h1>
     <div id="map"></div>
-
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         let map;
         let marker;
+        let bikeId = 1; // Example: set a default bike ID
+        let lastUpdate = 0;
 
         function initMap() {
             // Initial map setup
@@ -26,7 +28,6 @@
                 zoom: 15
             });
 
-            // Define the bike icon once the API is available
             const bikeIcon = {
                 url: '/img/bike-icon.png', // Custom bike icon
                 scaledSize: new google.maps.Size(50, 50),
@@ -41,48 +42,43 @@
                 title: 'Bike Location'
             });
 
-            // Update position every 2 seconds
-            setInterval(updatePosition, 2000);
+            // Start updates using jQuery
+            startUpdates();
         }
 
-        function updatePosition() {
-            fetch('/gps/get_position.php')
-                .then(response => {
-                    if (response.status === 304) return null;
-                    if (!response.ok) throw new Error('Network error');
-                    return response.json();
-                })
-                .then(data => {
-                    const pos = {
-                        lat: parseFloat(data.lat),
-                        lng: parseFloat(data.lng)
-                    };
-                    marker.setPosition(pos);
-                    map.panTo(pos);
-                });
+        function updateMarker(lat, lng) {
+            const pos = { lat: parseFloat(lat), lng: parseFloat(lng) };
+            marker.setPosition(pos);
+            map.panTo(pos);
         }
 
         function startUpdates() {
             const updateInterval = 5000; // 5 seconds
 
             function checkUpdates() {
-                fetch(`/gps/get_position.php?bike_id=${bikeId}&last_update=${lastUpdate}`)
-                    .then(response => {
-                        if (response.status === 304) return null;
-                        if (!response.ok) throw new Error('Network error');
-                        return response.json();
-                    })
-                    .then(data => {
-                        if (data) {
-                            lastUpdate = data.timestamp;
-                            updateMarker(data.lat, data.lng);
+                $.ajax({
+                    url: '/gps/get_position.php',
+                    method: 'GET',
+                    data: {
+                        bike_id: bikeId,
+                        last_update: lastUpdate
+                    },
+                    success: function (data, textStatus, xhr) {
+                        if (xhr.status === 304 || !data) {
+                            setTimeout(checkUpdates, updateInterval);
+                            return;
                         }
+
+                        updateMarker(data.lat, data.lng);
+                        lastUpdate = data.timestamp;
+
                         setTimeout(checkUpdates, updateInterval);
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        setTimeout(checkUpdates, updateInterval * 2); // Longer delay on error
-                    });
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        console.error('AJAX Error:', errorThrown);
+                        setTimeout(checkUpdates, updateInterval * 2); // Delay on error
+                    }
+                });
             }
 
             checkUpdates();
