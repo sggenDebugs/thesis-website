@@ -46,20 +46,51 @@
         }
 
         function updatePosition() {
-            fetch('/gps/get_position.php?bike_id=1')
-                .then(response => response.json())
+            fetch('/gps/get_position.php')
+                .then(response => {
+                    if (response.status === 304) return null;
+                    if (!response.ok) throw new Error('Network error');
+                    return response.json();
+                })
                 .then(data => {
-                    const pos = { 
-                        lat: parseFloat(data.latitude),
-                        lng: parseFloat(data.longitude) };
+                    const pos = {
+                        lat: parseFloat(data.lat),
+                        lng: parseFloat(data.lng)
+                    };
                     marker.setPosition(pos);
                     map.panTo(pos);
                 });
         }
+
+        function startUpdates() {
+            const updateInterval = 5000; // 5 seconds
+
+            function checkUpdates() {
+                fetch(`/gps/get_position.php?bike_id=${bikeId}&last_update=${lastUpdate}`)
+                    .then(response => {
+                        if (response.status === 304) return null;
+                        if (!response.ok) throw new Error('Network error');
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data) {
+                            lastUpdate = data.timestamp;
+                            updateMarker(data.lat, data.lng);
+                        }
+                        setTimeout(checkUpdates, updateInterval);
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        setTimeout(checkUpdates, updateInterval * 2); // Longer delay on error
+                    });
+            }
+
+            checkUpdates();
+        }
     </script>
     <script async defer
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCewoqc0dlIGMOb0uHPZE2B_IP05bs2MCc&callback=initMap">
-    </script>
+        </script>
 </body>
 
 </html>

@@ -5,10 +5,9 @@ require '../config.php';
 $bike_id = $_GET['bike_id'];
 
 $result = $conn->query("
-    SELECT latitude, longitude 
-    FROM bikes 
-    WHERE id = '$bike_id' 
-    ORDER BY last_used_at DESC 
+    SELECT lat, lng 
+    FROM gps_data
+    ORDER BY timestamp DESC 
     LIMIT 1
 ");
 
