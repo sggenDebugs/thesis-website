@@ -2,91 +2,187 @@
 <html>
 
 <head>
-    <title>Bike Tracking System</title>
-    <style>
-        #map {
-            height: 600px;
-            width: 100%;
-        }
-    </style>
+  <title>Bike Tracking System</title>
+  <style>
+    #map {
+      height: 600px;
+      width: 100%;
+    }
+  </style>
 </head>
 
 <body>
-    <h1>Live Bike Tracking</h1>
-    <div id="map"></div>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        let map;
-        let marker;
-        let bikeId = 1; // Example: set a default bike ID
-        let lastUpdate = 0;
+  <h1>Live Bike Tracking</h1>
+  <div id="map"></div>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    let marker;
+    let map;
+    let bikeId = 368;
+    let lastUpdate = 0;
+    let trailPath;
+    let trailCoordinates = [];
+    let currentPosition = null; // Current displayed position
+    let targetPosition = null; // Next target position
+    let animationStartTime = null;
+    let animationDuration = 1200; // 2 seconds per transition
 
-        function initMap() {
-            // Initial map setup
-            map = new google.maps.Map(document.getElementById('map'), {
-                center: { lat: 9.30687095402185, lng: 123.30439309577068 },
-                zoom: 18.50
-            });
+    // Custom bike icon with rotation capability
+    const bikeIcon = {
+      url: '/img/bike-icon.png',
+      scaledSize: new google.maps.Size(50, 50),
+      origin: new google.maps.Point(0, 0),
+      anchor: new google.maps.Point(25, 25)
+    };
 
-            const bikeIcon = {
-                url: '/img/bike-icon.png', // Custom bike icon
-                scaledSize: new google.maps.Size(50, 50),
-                origin: new google.maps.Point(0, 0),
-                anchor: new google.maps.Point(25, 25)
-            };
+    function initMap() {
+      map = new google.maps.Map(document.getElementById('map'), {
+        center: { lat: 9.30687095402185, lng: 123.30439309577068 },
+        zoom: 18.50,
+        streetViewControl: false
+      });
 
-            marker = new google.maps.Marker({
-                position: map.getCenter(),
-                map: map,
-                icon: bikeIcon,
-                title: 'Bike Location'
-            });
+      const bikeIcon = {
+        url: '/img/bike-icon.png',
+        scaledSize: new google.maps.Size(50, 50),
+        origin: new google.maps.Point(0, 0),
+        anchor: new google.maps.Point(25, 25)
+      };
 
-            // Start updates using jQuery
-            startUpdates();
-        }
+      // Initialize marker at first position
+      marker = new google.maps.Marker({
+        position: map.getCenter(),
+        map: map,
+        icon: bikeIcon,
+        optimized: false // Better for frequent updates
+      });
 
-        function updateMarker(lat, lng) {
-            const pos = { lat: parseFloat(lat), lng: parseFloat(lng) };
-            marker.setPosition(pos);
-            map.panTo(pos);
-        }
+      // Initialize trail path
+      trailPath = new google.maps.Polyline({
+        path: trailCoordinates,
+        geodesic: true,
+        strokeColor: '#FF0000',
+        strokeOpacity: 1.0,
+        strokeWeight: 2
+      });
+      trailPath.setMap(map);
 
-        function startUpdates() {
-            const updateInterval = 5000; // 5 seconds
+      startUpdates();
+    }
 
-            function checkUpdates() {
-                $.ajax({
-                    url: '/gps/get_position.php',
-                    method: 'GET',
-                    data: {
-                        bike_id: bikeId,
-                        last_update: lastUpdate
-                    },
-                    success: function (data, textStatus, xhr) {
-                        if (xhr.status === 304 || !data) {
-                            setTimeout(checkUpdates, updateInterval);
-                            return;
-                        }
+    // Linear interpolation function
+    function lerp(start, end, progress) {
+      return new google.maps.LatLng(
+        start.lat() + (end.lat() - start.lat()) * progress,
+        start.lng() + (end.lng() - start.lng()) * progress
+      );
+    }
 
-                        updateMarker(data.lat, data.lng);
-                        lastUpdate = data.timestamp;
+    // Animation frame handler
+    function animate(timestamp) {
+      if (!currentPosition || !targetPosition) {
+        console.warn("Animation skipped: Missing position data");
+        return;
+      }
 
-                        setTimeout(checkUpdates, updateInterval);
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        console.error('AJAX Error:', errorThrown);
-                        setTimeout(checkUpdates, updateInterval * 2); // Delay on error
-                    }
-                });
+      if (!animationStartTime) animationStartTime = timestamp;
+      const elapsed = timestamp - animationStartTime;
+      const progress = Math.min(elapsed / animationDuration, 1);
+
+      try {
+        const intermediatePos = lerp(currentPosition, targetPosition, progress);
+
+        marker.setPosition(intermediatePos);
+        trailCoordinates.push(intermediatePos);
+        trailPath.setPath(trailCoordinates);
+
+        const heading = google.maps.geometry.spherical.computeHeading(
+          currentPosition,
+          targetPosition
+        );
+
+        const bikeIcon = {
+          url: '/img/bike-icon.png',
+          scaledSize: new google.maps.Size(50, 50),
+          origin: new google.maps.Point(0, 0),
+          anchor: new google.maps.Point(25, 25)
+        };
+        marker.setIcon({ ...bikeIcon, rotation: heading });
+
+        // Smooth map panning
+        const currentCenter = map.getCenter();
+        const newCenter = new google.maps.LatLng(
+          currentCenter.lat() + (intermediatePos.lat() - currentCenter.lat()) * 0.1,
+          currentCenter.lng() + (intermediatePos.lng() - currentCenter.lng()) * 0.1
+        );
+        map.panTo(newCenter);
+
+      } catch (error) {
+        console.error("Animation error:", error);
+        animationStartTime = null;
+        return;
+      }
+
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      } else {
+        currentPosition = targetPosition;
+        animationStartTime = null;
+      }
+    }
+
+    function startUpdates() {
+      function checkUpdates() {
+        $.ajax({
+          url: '/gps/get_position.php', // Your PHP endpoint
+          method: 'GET',
+          data: {
+            bike_id: bikeId,
+            last_update: lastUpdate // Send last timestamp to get only new data
+          },
+          dataType: 'json',
+          success: function (data) {
+            if (!data || !data.lat || !data.lng) {
+              console.log("No new GPS data received");
+              setTimeout(checkUpdates, animationDuration); // Retry after 1.5s
+              return;
             }
 
-            checkUpdates();
-        }
+            // Convert to LatLng object
+            const newPosition = new google.maps.LatLng(
+              parseFloat(data.lat),
+              parseFloat(data.lng)
+            );
+
+            if (!currentPosition) {
+              // Initial position
+              currentPosition = newPosition;
+              marker.setPosition(currentPosition);
+            } else {
+              // Start new animation
+              targetPosition = newPosition;
+              animationStartTime = null;
+              requestAnimationFrame(animate);
+            }
+
+            lastUpdate = data.timestamp || Date.now() / 1000;
+            setTimeout(checkUpdates, animationDuration); // Poll every 1.5 seconds
+          },
+          error: function (jqXHR, textStatus, errorThrown) {
+            console.error("AJAX Error:", textStatus, errorThrown);
+            setTimeout(checkUpdates, animationDuration * 2); // Retry after longer delay on error
+          }
+        });
+      }
+
+      checkUpdates(); // Start the polling loop
+    }
+  </script>
+
+  <!-- Add geometry library to Maps API -->
+  <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCewoqc0dlIGMOb0uHPZE2B_IP05bs2MCc&libraries=geometry&callback=initMap">
     </script>
-    <script async defer
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCewoqc0dlIGMOb0uHPZE2B_IP05bs2MCc&callback=initMap">
-        </script>
 </body>
 
 </html>
