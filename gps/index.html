@@ -14,34 +14,23 @@
 <body>
   <h1>Live Bike Tracking</h1>
   <div id="map"></div>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <!-- Include Socket.IO client -->
+  <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
   <script>
     let marker;
     let map;
-    let bikeId = 368;
-    let lastUpdate = 0;
+    const bikeId = 368; // Your bike ID
     let trailPath;
     let trailCoordinates = [];
-    let currentPosition = null; // Current displayed position
-    let targetPosition = null; // Next target position
+    let currentPosition = null;
+    let targetPosition = null;
     let animationStartTime = null;
-    let animationDuration = 1200; // 2 seconds per transition
+    const animationDuration = 1200;
 
-    // Custom bike icon with rotation capability
-    const bikeIcon = {
-      url: '/img/bike-icon.png',
-      scaledSize: new google.maps.Size(50, 50),
-      origin: new google.maps.Point(0, 0),
-      anchor: new google.maps.Point(25, 25)
-    };
+
 
     function initMap() {
-      map = new google.maps.Map(document.getElementById('map'), {
-        center: { lat: 9.30687095402185, lng: 123.30439309577068 },
-        zoom: 18.50,
-        streetViewControl: false
-      });
-
       const bikeIcon = {
         url: '/img/bike-icon.png',
         scaledSize: new google.maps.Size(50, 50),
@@ -49,15 +38,22 @@
         anchor: new google.maps.Point(25, 25)
       };
 
-      // Initialize marker at first position
+      // Initialize Google Map
+      map = new google.maps.Map(document.getElementById('map'), {
+        center: { lat: 9.30687095402185, lng: 123.30439309577068 },
+        zoom: 18.5,
+        streetViewControl: false
+      });
+
+      // Create bike marker
       marker = new google.maps.Marker({
         position: map.getCenter(),
         map: map,
         icon: bikeIcon,
-        optimized: false // Better for frequent updates
+        optimized: false
       });
 
-      // Initialize trail path
+      // Create the trail polyline
       trailPath = new google.maps.Polyline({
         path: trailCoordinates,
         geodesic: true,
@@ -67,10 +63,51 @@
       });
       trailPath.setMap(map);
 
-      startUpdates();
+      // Initialize Socket.IO connection with the WebSocket server.
+      // Update the URL to match your server configuration.
+      const socket = io('ws://147.93.30.102:3000', {
+        transports: ['websocket'],
+        auth: {
+          bikeId: bikeId
+        }
+      });
+
+      // Register bike on connection
+      socket.on('connect', () => {
+        console.log('Connected to WebSocket server');
+        socket.emit('register-bike', bikeId);
+      });
+
+      // Listen for position updates emitted by the server
+      socket.on('position', (data) => {
+        handleNewPosition(data.lat, data.lng, data.timestamp);
+      });
+
+      // Log any connection errors
+      socket.on('connect_error', (err) => {
+        console.error('Connection error:', err.message);
+      });
     }
 
-    // Linear interpolation function
+    function handleNewPosition(lat, lng, timestamp) {
+      const newPosition = new google.maps.LatLng(lat, lng);
+
+      // Set initial position or animate transition
+      if (!currentPosition) {
+        currentPosition = newPosition;
+        marker.setPosition(currentPosition);
+      } else {
+        targetPosition = newPosition;
+        animationStartTime = null;
+        requestAnimationFrame(animate);
+      }
+
+      // Update the trail with the new position
+      trailCoordinates.push(newPosition);
+      trailPath.setPath(trailCoordinates);
+    }
+
+    // Linear interpolation between two positions
     function lerp(start, end, progress) {
       return new google.maps.LatLng(
         start.lat() + (end.lat() - start.lat()) * progress,
@@ -78,7 +115,7 @@
       );
     }
 
-    // Animation frame handler
+    // Animate the marker from current to target position
     function animate(timestamp) {
       if (!currentPosition || !targetPosition) {
         console.warn("Animation skipped: Missing position data");
@@ -91,11 +128,9 @@
 
       try {
         const intermediatePos = lerp(currentPosition, targetPosition, progress);
-
         marker.setPosition(intermediatePos);
-        trailCoordinates.push(intermediatePos);
-        trailPath.setPath(trailCoordinates);
 
+        // Compute heading for marker rotation using Google Maps geometry library
         const heading = google.maps.geometry.spherical.computeHeading(
           currentPosition,
           targetPosition
@@ -107,16 +142,16 @@
           origin: new google.maps.Point(0, 0),
           anchor: new google.maps.Point(25, 25)
         };
+        // Update the marker icon with rotation if needed (note: marker rotation may require custom marker implementation)
         marker.setIcon({ ...bikeIcon, rotation: heading });
 
-        // Smooth map panning
+        // Optionally pan the map smoothly
         const currentCenter = map.getCenter();
         const newCenter = new google.maps.LatLng(
           currentCenter.lat() + (intermediatePos.lat() - currentCenter.lat()) * 0.1,
           currentCenter.lng() + (intermediatePos.lng() - currentCenter.lng()) * 0.1
         );
         map.panTo(newCenter);
-
       } catch (error) {
         console.error("Animation error:", error);
         animationStartTime = null;
@@ -130,56 +165,9 @@
         animationStartTime = null;
       }
     }
-
-    function startUpdates() {
-      function checkUpdates() {
-        $.ajax({
-          url: '/gps/get_position.php', // Your PHP endpoint
-          method: 'GET',
-          data: {
-            bike_id: bikeId,
-            last_update: lastUpdate // Send last timestamp to get only new data
-          },
-          dataType: 'json',
-          success: function (data) {
-            if (!data || !data.lat || !data.lng) {
-              console.log("No new GPS data received");
-              setTimeout(checkUpdates, animationDuration); // Retry after 1.5s
-              return;
-            }
-
-            // Convert to LatLng object
-            const newPosition = new google.maps.LatLng(
-              parseFloat(data.lat),
-              parseFloat(data.lng)
-            );
-
-            if (!currentPosition) {
-              // Initial position
-              currentPosition = newPosition;
-              marker.setPosition(currentPosition);
-            } else {
-              // Start new animation
-              targetPosition = newPosition;
-              animationStartTime = null;
-              requestAnimationFrame(animate);
-            }
-
-            lastUpdate = data.timestamp || Date.now() / 1000;
-            setTimeout(checkUpdates, animationDuration); // Poll every 1.5 seconds
-          },
-          error: function (jqXHR, textStatus, errorThrown) {
-            console.error("AJAX Error:", textStatus, errorThrown);
-            setTimeout(checkUpdates, animationDuration * 2); // Retry after longer delay on error
-          }
-        });
-      }
-
-      checkUpdates(); // Start the polling loop
-    }
   </script>
 
-  <!-- Add geometry library to Maps API -->
+  <!-- Load Google Maps API with geometry library; ensure your API key is valid -->
   <script async defer
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCewoqc0dlIGMOb0uHPZE2B_IP05bs2MCc&libraries=geometry&callback=initMap">
     </script>
