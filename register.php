@@ -1,22 +1,11 @@
 <?php
 session_start();
 require 'classes/user.php'; // Include the User class
-
-$servername = "127.0.0.1";
-$email = "u388284544_sggen";
-$password = "xB@akashinji420x";
-$dbname = "u388284544_server";
+require 'db/config.php';
 
 $error = "";
 $success = "";
 
-// Database connection
-$conn = new mysqli($servername, $email, $password, $dbname);
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-
-// Create a User object
 $user = new User($conn);
 
 function verifyPasswords($password, $retype_password)

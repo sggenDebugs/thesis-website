@@ -1,14 +1,9 @@
 <?php
 session_start(); // Start the session
 require 'classes/user.php';
-
-$servername = "127.0.0.1";
-$email = "u388284544_sggen";
-$password = "xB@akashinji420x";
-$dbname = "u388284544_server";
+require 'db/config.php'; // Include the database configuration file
 
 // Create connection
-$conn = new mysqli($servername, $email, $password, $dbname);
 $user = new User($conn);
 
 // Check connection

@@ -7,20 +7,7 @@ if (!isset($_SESSION['email'])) {
 
 // Include the Bike class
 require 'classes/bike.php';
-
-// Database credentials (use environment variables or a secure config file in production)
-$servername = "127.0.0.1";
-$username = "u388284544_sggen";
-$password = "xB@akashinji420x";
-$dbname = "u388284544_server";
-
-// Create a database connection
-$mysqli = new mysqli($servername, $username, $password, $dbname);
-
-// Check connection
-if ($mysqli->connect_error) {
-    die("Connection failed: " . $mysqli->connect_error);
-}
+require 'db/config.php'; // Include the database configuration file
 
 // Create a Bike object
 $bikeManager = new Bike($mysqli);
