@@ -9,11 +9,8 @@ if (!isset($_SESSION['email'])) {
 require 'classes/bike.php';
 require 'db/config.php'; // Include the database configuration file
 
-// Create a Bike object
-$bikeManager = new Bike($mysqli);
-
-// Fetch available bikes
-$availableBikes = $bikeManager->getAvailableBikes();
+// Fetch available bikes using the static method
+$availableBikes = Bike::getAvailableBikes($conn);
 ?>
 
 <!DOCTYPE html>
@@ -66,18 +63,26 @@ $availableBikes = $bikeManager->getAvailableBikes();
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Location</th>
-                    <th>Hourly Rate</th>
-                    <th>Last Used At</th>
+                    <th>Created At</th>
+                    <th>Status</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
                 <?php foreach ($availableBikes as $bike): ?>
                     <tr>
                         <td><?php echo htmlspecialchars($bike->getId()); ?></td>
-                        <td><?php echo htmlspecialchars($bike->getLocation()); ?></td>
-                        <td><?php echo htmlspecialchars($bike->getHourlyRate()); ?> Php / hour</td>
-                        <td><?php echo htmlspecialchars($bike->getLastUsedAt()); ?></td>
+                        <td><?php echo htmlspecialchars($bike->getCreatedAt()); ?></td>
+                        <td>
+                            <?php
+                            // Determine the bike's status based on time_rented and time_returned
+                            if ($bike->getTimeRented() === null || $bike->getTimeReturned() !== null) {
+                                echo "Available";
+                            } else {
+                                echo "Rented";
+                            }
+                            ?>
+                        </td>
                         <td>
                             <a href="rent_bike.php?bike_id=<?php echo $bike->getId(); ?>">Rent Now</a>
                         </td>
@@ -93,5 +98,5 @@ $availableBikes = $bikeManager->getAvailableBikes();
 
 <?php
 // Close the database connection
-$mysqli->close();
+$conn->close();
 ?>
