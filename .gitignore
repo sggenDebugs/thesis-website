@@ -1,4 +1,6 @@
 fiveserver.config.js
 .env
 rental-bike-flow-plan.md
-tracker/uploads/*
+user-credentials.md
+tracker/uploads/
+vendor/
