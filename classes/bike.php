@@ -61,23 +61,40 @@ class Bike {
         return $this->time_rented === null || $this->time_returned !== null;
     }
 
-    public function reserve($user_id) {
+    public function reserve() {
         if (!$this->isAvailable()) {
             return false;
         }
 
         $current_time = date('Y-m-d H:i:s');
-        $query = "UPDATE bikes SET time_rented = ?, card_id = ? WHERE id = ? AND (time_rented IS NULL OR time_returned IS NOT NULL)";
+        $query = "UPDATE bikes SET time_rented = ? WHERE id = ? AND (time_rented IS NULL OR time_returned IS NOT NULL)";
         $stmt = $this->mysqli->prepare($query);
-        $stmt->bind_param('sii', $current_time, $user_id, $this->id);
+        $stmt->bind_param('si', $current_time, $this->id);
         $stmt->execute();
         $affected = $stmt->affected_rows;
         $stmt->close();
 
         if ($affected > 0) {
             $this->time_rented = $current_time;
-            $this->card_id = $user_id;
             return true;
+        }
+        return false;
+    }
+
+    // Method to assign the bike with an NFC tag ID (used later, e.g., in payment.php)
+    public function assign($nfc_tag_id) {
+        if ($this->time_rented && !$this->time_returned) { // Bike is reserved
+            $query = "UPDATE bikes SET card_id = ? WHERE id = ?";
+            $stmt = $this->mysqli->prepare($query);
+            $stmt->bind_param('ii', $nfc_tag_id, $this->id);
+            $stmt->execute();
+            $affected = $stmt->affected_rows;
+            $stmt->close();
+
+            if ($affected > 0) {
+                $this->card_id = $nfc_tag_id;
+                return true;
+            }
         }
         return false;
     }
