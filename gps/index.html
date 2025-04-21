@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-
 <head>
   <title>Bike Tracking System</title>
   <style>
@@ -8,27 +7,48 @@
       height: 600px;
       width: 100%;
     }
+    #status {
+      margin-top: 10px;
+      padding: 10px;
+      background-color: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: 5px;
+      font-family: Arial, sans-serif;
+    }
+    #status p {
+      margin: 5px 0;
+      font-size: 16px;
+    }
+    .locked {
+      color: #dc3545; /* Red for locked */
+    }
+    .unlocked {
+      color: #28a745; /* Green for unlocked */
+    }
   </style>
 </head>
-
 <body>
   <h1>Live Bike Tracking</h1>
   <div id="map"></div>
+  <div id="status">
+    <p id="bike-id">Bike ID: Unknown</p>
+    <p id="lock-status">Bike: Unknown</p>
+    <p id="rented-time">Rented: Not rented</p>
+    <p id="returned-time">Returned: Not returned</p>
+  </div>
 
   <!-- Include Socket.IO client -->
   <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
   <script>
     let marker;
     let map;
-    const bikeId = 368; // Your bike ID
+    const bikeId = 373; // Your bike ID
     let trailPath;
     let trailCoordinates = [];
     let currentPosition = null;
     let targetPosition = null;
     let animationStartTime = null;
     const animationDuration = 1200;
-
-
 
     function initMap() {
       const bikeIcon = {
@@ -63,8 +83,7 @@
       });
       trailPath.setMap(map);
 
-      // Initialize Socket.IO connection with the WebSocket server.
-      // Update the URL to match your server configuration.
+      // Initialize Socket.IO connection
       const socket = io('wss://cedolis.online:3000', {
         transports: ['websocket'],
         auth: {
@@ -72,18 +91,42 @@
         }
       });
 
-      // Register bike on connection
+      // Register bike and request bike info on connection
       socket.on('connect', () => {
         console.log('Connected to WebSocket server');
         socket.emit('register-bike', bikeId);
+        socket.emit('get-bike-info', bikeId);
       });
 
-      // Listen for position updates emitted by the server
+      // Listen for position updates
       socket.on('position', (data) => {
         handleNewPosition(data.lat, data.lng, data.timestamp);
       });
 
-      // Log any connection errors
+      // Listen for bike info updates
+      socket.on('bike-info', (data) => {
+        console.log('Received bike info:', data);
+        const bikeIdElement = document.getElementById('bike-id');
+        const lockStatus = document.getElementById('lock-status');
+        const rentedTime = document.getElementById('rented-time');
+        const returnedTime = document.getElementById('returned-time');
+
+        bikeIdElement.textContent = `Bike ID: ${data.bike_id}`;
+        lockStatus.textContent = `Bike: ${data.state.charAt(0).toUpperCase() + data.state.slice(1)}`;
+        lockStatus.className = data.state === 'locked' ? 'locked' : 'unlocked';
+        rentedTime.textContent = data.rented_at ? `Rented: ${new Date(data.rented_at).toLocaleString()}` : 'Rented: Not rented';
+        returnedTime.textContent = data.returned_at ? `Returned: ${new Date(data.returned_at).toLocaleString()}` : 'Returned: Not returned';
+      });
+
+      // Handle errors from bike info request
+      socket.on('bike-info-error', (error) => {
+        console.error('Bike info error:', error.message);
+        const lockStatus = document.getElementById('lock-status');
+        lockStatus.textContent = `Bike: Error - ${error.message}`;
+        lockStatus.className = 'locked'; // Default to red for errors
+      });
+
+      // Log connection errors
       socket.on('connect_error', (err) => {
         console.error('Connection error:', err.message);
       });
@@ -102,7 +145,7 @@
         requestAnimationFrame(animate);
       }
 
-      // Update the trail with the new position
+      // Update the trail
       trailCoordinates.push(newPosition);
       trailPath.setPath(trailCoordinates);
     }
@@ -115,7 +158,7 @@
       );
     }
 
-    // Animate the marker from current to target position
+    // Animate the marker
     function animate(timestamp) {
       if (!currentPosition || !targetPosition) {
         console.warn("Animation skipped: Missing position data");
@@ -130,7 +173,7 @@
         const intermediatePos = lerp(currentPosition, targetPosition, progress);
         marker.setPosition(intermediatePos);
 
-        // Compute heading for marker rotation using Google Maps geometry library
+        // Compute heading for marker rotation
         const heading = google.maps.geometry.spherical.computeHeading(
           currentPosition,
           targetPosition
@@ -142,10 +185,9 @@
           origin: new google.maps.Point(0, 0),
           anchor: new google.maps.Point(25, 25)
         };
-        // Update the marker icon with rotation if needed (note: marker rotation may require custom marker implementation)
         marker.setIcon({ ...bikeIcon, rotation: heading });
 
-        // Optionally pan the map smoothly
+        // Smooth map panning
         const currentCenter = map.getCenter();
         const newCenter = new google.maps.LatLng(
           currentCenter.lat() + (intermediatePos.lat() - currentCenter.lat()) * 0.1,
@@ -167,10 +209,9 @@
     }
   </script>
 
-  <!-- Load Google Maps API with geometry library; ensure your API key is valid -->
+  <!-- Load Google Maps API -->
   <script async defer
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCewoqc0dlIGMOb0uHPZE2B_IP05bs2MCc&libraries=geometry&callback=initMap">
-    </script>
+  </script>
 </body>
-
 </html>
